@@ -4,7 +4,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PredictionController;
-use App\Http\Controllers\MapController; // TAMBAHKAN INI
+use App\Http\Controllers\MapController;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 // Public routes
 Route::get('/', [LoginController::class, 'showLoginForm'])->name('login');
@@ -29,4 +31,20 @@ Route::middleware('auth')->group(function () {
 // Fallback
 Route::fallback(function () {
     return redirect()->route('login');
+});
+
+// EMERGENCY SETUP ROUTE
+Route::get('/setup-admin', function () {
+    try {
+        \App\Models\User::updateOrCreate(
+            ['email' => 'admin@seaguard.id'],
+            [
+                'name' => 'Admin SeaGuard',
+                'password' => \Illuminate\Support\Facades\Hash::make('password123'),
+            ]
+        );
+        return "✅ User admin berhasil dipastikan ada di database Railway! Silakan <a href='/'>Login ke sini</a> dengan email: admin@seaguard.id dan password: password123";
+    } catch (\Exception $e) {
+        return "❌ Gagal membuat user: " . $e->getMessage();
+    }
 });
