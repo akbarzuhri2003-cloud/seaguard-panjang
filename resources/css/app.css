@@ -1,0 +1,262 @@
+/* resources/css/app.css - VERSI FIXED */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ===== CUSTOM BASE STYLES ===== */
+@layer base {
+    :root {
+        --color-tide-high: 239 68 68;    /* #ef4444 */
+        --color-tide-medium: 59 130 246; /* #3b82f6 */
+        --color-tide-low: 16 185 129;    /* #10b981 */
+    }
+
+    /* HAPUS LINE INI: @apply border-border; */
+
+    body {
+        @apply font-sans antialiased text-gray-800 bg-gradient-to-br from-blue-50/50 via-white to-cyan-50/50 
+               min-h-screen overflow-x-hidden;
+    }
+
+    ::selection {
+        @apply bg-seaguard-200 text-seaguard-900;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+        @apply w-2 h-2;
+    }
+
+    ::-webkit-scrollbar-track {
+        @apply bg-transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        @apply bg-seaguard-300/50 rounded-full backdrop-blur-sm 
+               hover:bg-seaguard-400/70 transition-colors duration-300;
+    }
+
+    /* Smooth focus outline */
+    :focus-visible {
+        @apply outline-none ring-2 ring-seaguard-500 ring-offset-2 ring-offset-white;
+    }
+
+    /* Better typography */
+    h1, h2, h3, h4, h5, h6 {
+        @apply font-semibold tracking-tight text-gray-900;
+    }
+
+    h1 {
+        @apply text-4xl md:text-5xl;
+    }
+
+    h2 {
+        @apply text-3xl md:text-4xl;
+    }
+
+    h3 {
+        @apply text-2xl md:text-3xl;
+    }
+}
+
+/* ===== CUSTOM COMPONENTS ===== */
+@layer components {
+    /* Button Components */
+    .btn-seaguard {
+        @apply inline-flex items-center justify-center px-6 py-3 gap-2
+               bg-gradient-to-r from-seaguard-600 to-seaguard-500 
+               text-white font-semibold rounded-xl
+               hover:from-seaguard-700 hover:to-seaguard-600
+               focus:outline-none focus:ring-2 focus:ring-seaguard-500 focus:ring-offset-2
+               transition-all duration-300 shadow-lg hover:shadow-xl 
+               transform hover:-translate-y-0.5 active:translate-y-0
+               disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none;
+    }
+
+    .btn-seaguard-outline {
+        @apply inline-flex items-center justify-center px-6 py-3 gap-2
+               bg-white text-seaguard-600 border-2 border-seaguard-200 
+               font-semibold rounded-xl
+               hover:bg-seaguard-50 hover:border-seaguard-300 hover:text-seaguard-700
+               focus:outline-none focus:ring-2 focus:ring-seaguard-500 focus:ring-offset-2
+               transition-all duration-300 shadow-sm hover:shadow-md
+               disabled:opacity-50 disabled:cursor-not-allowed;
+    }
+
+    .btn-seaguard-ghost {
+        @apply inline-flex items-center justify-center px-4 py-2 gap-2
+               text-seaguard-600 font-medium rounded-lg
+               hover:bg-seaguard-50 hover:text-seaguard-700
+               focus:outline-none focus:ring-2 focus:ring-seaguard-500 focus:ring-offset-1
+               transition-all duration-200;
+    }
+
+    /* Card Components */
+    .card-seaguard {
+        @apply bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-6 border border-white/50
+               hover:shadow-xl hover:border-seaguard-200/50 transition-all duration-300;
+    }
+
+    .card-seaguard-glass {
+        @apply bg-white/40 backdrop-blur-xl rounded-2xl shadow-lg p-6 border border-white/30
+               hover:shadow-2xl hover:bg-white/50 transition-all duration-500;
+    }
+
+    /* Tide Status Components */
+    .tide-high {
+        @apply text-red-600 bg-gradient-to-r from-red-50/80 to-red-100/50 
+               border-l-4 border-red-500;
+    }
+
+    .tide-medium {
+        @apply text-blue-600 bg-gradient-to-r from-blue-50/80 to-blue-100/50 
+               border-l-4 border-blue-500;
+    }
+
+    .tide-low {
+        @apply text-green-600 bg-gradient-to-r from-green-50/80 to-green-100/50 
+               border-l-4 border-green-500;
+    }
+
+    .badge-tide-high {
+        @apply px-3 py-1 text-xs font-semibold rounded-full 
+               bg-gradient-to-r from-red-100 to-red-200 text-red-700 
+               border border-red-200;
+    }
+
+    .badge-tide-medium {
+        @apply px-3 py-1 text-xs font-semibold rounded-full 
+               bg-gradient-to-r from-blue-100 to-blue-200 text-blue-700 
+               border border-blue-200;
+    }
+
+    .badge-tide-low {
+        @apply px-3 py-1 text-xs font-semibold rounded-full 
+               bg-gradient-to-r from-green-100 to-green-200 text-green-700 
+               border border-green-200;
+    }
+
+    /* Navigation Components */
+    .nav-link {
+        @apply flex items-center gap-3 px-4 py-3 rounded-xl 
+               text-gray-700 hover:text-seaguard-600
+               hover:bg-gradient-to-r hover:from-white/50 hover:to-seaguard-50/50
+               transition-all duration-300 hover:pl-6 hover:shadow-sm
+               border border-transparent hover:border-seaguard-100;
+    }
+
+    .nav-link.active {
+        @apply bg-gradient-to-r from-seaguard-50/80 to-blue-50/50 
+               text-seaguard-600 font-semibold pl-6
+               border border-seaguard-100 shadow-sm;
+    }
+
+    /* Form Components */
+    .input-seaguard {
+        @apply w-full px-4 py-3 bg-white/80 border border-gray-300 
+               rounded-xl focus:ring-2 focus:ring-seaguard-500 
+               focus:border-transparent placeholder:text-gray-500
+               transition-all duration-300 focus:bg-white
+               hover:border-seaguard-300 disabled:opacity-50 
+               disabled:cursor-not-allowed;
+    }
+
+    .label-seaguard {
+        @apply block text-sm font-medium text-gray-700 mb-2 
+               flex items-center gap-2;
+    }
+}
+
+/* ===== CUSTOM UTILITIES ===== */
+@layer utilities {
+    /* Animation delays */
+    .animation-delay-75 {
+        animation-delay: 75ms;
+    }
+    .animation-delay-150 {
+        animation-delay: 150ms;
+    }
+    .animation-delay-300 {
+        animation-delay: 300ms;
+    }
+    .animation-delay-500 {
+        animation-delay: 500ms;
+    }
+    .animation-delay-700 {
+        animation-delay: 700ms;
+    }
+
+    /* Custom scrollbar */
+    .scrollbar-seaguard {
+        scrollbar-width: thin;
+        scrollbar-color: theme('colors.seaguard.300') transparent;
+    }
+    
+    .scrollbar-seaguard::-webkit-scrollbar {
+        @apply w-2;
+    }
+    
+    .scrollbar-seaguard::-webkit-scrollbar-track {
+        @apply bg-transparent;
+    }
+    
+    .scrollbar-seaguard::-webkit-scrollbar-thumb {
+        @apply bg-seaguard-300/60 rounded-full hover:bg-seaguard-400/80 
+               transition-colors duration-300;
+    }
+
+    /* Hide scrollbar */
+    .scrollbar-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+    
+    .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+/* ===== CUSTOM ANIMATIONS ===== */
+@keyframes tideFlow {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-8px); }
+}
+
+@keyframes wave {
+    0% { transform: translateX(0) translateZ(0) scaleY(1); }
+    50% { transform: translateX(-25%) translateZ(0) scaleY(0.85); }
+    100% { transform: translateX(-50%) translateZ(0) scaleY(1); }
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+/* ===== DARK MODE ===== */
+@media (prefers-color-scheme: dark) {
+    .dark body {
+        @apply bg-gray-900 text-gray-100;
+    }
+    
+    .dark .card-seaguard {
+        @apply bg-gray-800/50 border-gray-700;
+    }
+    
+    .dark .nav-link {
+        @apply text-gray-300 hover:text-seaguard-300 hover:bg-gray-700/50;
+    }
+    
+    .dark .nav-link.active {
+        @apply bg-gray-700/70 text-seaguard-300 border-gray-600;
+    }
+}
+
+/* ===== PRINT STYLES ===== */
+@media print {
+    .no-print {
+        display: none !important;
+    }
+}
