@@ -10,13 +10,15 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
-        User::create([
-            'name' => 'Admin SeaGuard',
-            'email' => 'admin@seaguard.id',
-            'password' => Hash::make('password123'),
-        ]);
+        User::updateOrCreate(
+            ['email' => 'admin@seaguard.id'],
+            [
+                'name' => 'Admin SeaGuard',
+                'password' => Hash::make('password123'),
+            ]
+        );
         
-        $this->command->info('✅ User admin berhasil dibuat!');
+        $this->command->info('✅ User admin berhasil dipastikan ada!');
         $this->command->info('📧 Email: admin@seaguard.id');
         $this->command->info('🔑 Password: password123');
     }

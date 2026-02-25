@@ -18,8 +18,8 @@ class TideHistorySeeder extends Seeder
         // Kosongkan tabel terlebih dahulu
         DB::table('tide_history')->truncate();
         
-        // Generate data untuk 2 tahun terakhir (cukup untuk training)
-        $startDate = Carbon::now()->subYears(2);
+        // Generate data untuk 6 bulan terakhir (cukup untuk awal aplikasi)
+        $startDate = Carbon::now()->subMonths(6);
         $endDate = Carbon::now();
         $currentDate = $startDate->copy();
         

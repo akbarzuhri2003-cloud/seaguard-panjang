@@ -16,7 +16,7 @@ class HistoricalTideSeeder extends Seeder
         $this->command->info('🌊 Memulai seeding data historis pasang surut...');
         
         // Kosongkan tabel terlebih dahulu
-        DB::table('tide_history')->truncate();
+        DB::table('historical_tides')->truncate();
         
         // Data dasar untuk Bandar Lampung - Panjang
         $locations = [
@@ -37,8 +37,8 @@ class HistoricalTideSeeder extends Seeder
             ],
         ];
         
-        // Generate data 5 tahun terakhir (2020-2024)
-        $startDate = Carbon::create(2020, 1, 1);
+        // Generate data 1 tahun terakhir (2024) agar lebih cepat
+        $startDate = Carbon::create(2024, 1, 1);
         $endDate = Carbon::create(2024, 12, 31);
         $currentDate = $startDate->copy();
         
@@ -77,7 +77,7 @@ class HistoricalTideSeeder extends Seeder
                     // Data cuaca berdasarkan BMKG
                     $weather = $this->generateWeatherData($currentDate, $hour, $isHighTidePeriod);
                     
-                    DB::table('tide_history')->insert([
+                    DB::table('historical_tides')->insert([
                         'date' => $currentDate->toDateString(),
                         'time' => sprintf('%02d:00:00', $hour),
                         'height' => $height,
