@@ -14,6 +14,9 @@ class TideImportService
 {
     public function import(UploadedFile $file)
     {
+        // Prevent timeout for large files
+        set_time_limit(0);
+        
         try {
             $spreadsheet = IOFactory::load($file->getPathname());
             $worksheet = $spreadsheet->getActiveSheet();
@@ -22,10 +25,8 @@ class TideImportService
             // Remove header row
             array_shift($rows);
             
-            $count = 0;
+            $dataToUpsert = [];
             $errors = [];
-            
-            DB::beginTransaction();
             
             foreach ($rows as $index => $row) {
                 // Skip empty rows
@@ -34,16 +35,26 @@ class TideImportService
                 }
                 
                 try {
-                    $this->processRow($row);
-                    $count++;
+                    $dataToUpsert[] = $this->prepareRowData($row);
                 } catch (\Exception $e) {
                     $rowNum = $index + 2; // +1 for 0-index, +1 for header
                     $errors[] = "Row {$rowNum}: " . $e->getMessage();
-                    Log::warning("Error importing row {$rowNum}: " . $e->getMessage());
+                    Log::warning("Error processing row {$rowNum}: " . $e->getMessage());
                 }
             }
             
-            DB::commit();
+            // Batch upsert in chunks to prevent memory/query length issues
+            $chunks = array_chunk($dataToUpsert, 500);
+            $count = 0;
+            
+            foreach ($chunks as $chunk) {
+                HistoricalTide::upsert(
+                    $chunk,
+                    ['date', 'time'], // Unique keys
+                    ['height', 'type', 'temperature', 'wind_speed', 'pressure', 'wind_direction', 'updated_at'] // Columns to update
+                );
+                $count += count($chunk);
+            }
             
             return [
                 'success' => true,
@@ -53,7 +64,6 @@ class TideImportService
             ];
             
         } catch (\Exception $e) {
-            DB::rollBack();
             Log::error("Import failed: " . $e->getMessage());
             
             return [
@@ -64,36 +74,24 @@ class TideImportService
         }
     }
     
-    private function processRow($row)
+    private function prepareRowData($row)
     {
-        // Expected columns:
-        // 0: Date (Y-m-d or Excel date format)
-        // 1: Time (H:i:s or Excel time format)
-        // 2: Height (numeric)
-        // 3: Temperature (optional)
-        // 4: Wind Speed (optional)
-        // 5: Pressure (optional)
-        
         $date = $this->parseDate($row[0]);
         $time = $this->parseTime($row[1] ?? '00:00:00');
         $height = floatval($row[2] ?? 0);
         
-        $data = [
+        return [
             'date' => $date,
             'time' => $time,
             'height' => $height,
             'type' => $this->determineTideType($height, $time),
-            'temperature' => isset($row[3]) && $row[3] !== '' ? floatval($row[3]) : 28.5, // Default average temp
-            'wind_speed' => isset($row[4]) && $row[4] !== '' ? floatval($row[4]) : 3.2,   // Default average wind speed
-            'pressure' => isset($row[5]) && $row[5] !== '' ? floatval($row[5]) : 1010.5, // Default average pressure
-            'wind_direction' => isset($row[6]) && $row[6] !== '' ? $row[6] : 'Utara',    // Default direction
+            'temperature' => isset($row[3]) && $row[3] !== '' ? floatval($row[3]) : 28.5,
+            'wind_speed' => isset($row[4]) && $row[4] !== '' ? floatval($row[4]) : 3.2,
+            'pressure' => isset($row[5]) && $row[5] !== '' ? floatval($row[5]) : 1010.5,
+            'wind_direction' => isset($row[6]) && $row[6] !== '' ? $row[6] : 'Utara',
+            'created_at' => now(),
+            'updated_at' => now(),
         ];
-        
-        // Update or create based on date and time
-        HistoricalTide::updateOrCreate(
-            ['date' => $date, 'time' => $time],
-            $data
-        );
     }
     
     private function parseDate($value)
