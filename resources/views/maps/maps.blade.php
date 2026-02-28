@@ -181,16 +181,22 @@
                     <p class="text-[10px] md:text-sm text-gray-500">Panjang, Bandar Lampung (Real-time)</p>
                 </div>
                 <div class="flex flex-wrap gap-2 w-full md:w-auto">
+                    <button id="streetViewBtn" class="flex-1 md:flex-none px-3 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition flex items-center justify-center">
+                        <i class="fas fa-street-view mr-2"></i>Street View
+                    </button>
                     <button id="heatmapToggle" class="flex-1 md:flex-none px-3 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition flex items-center justify-center">
                         <i class="fas fa-fire mr-2"></i>Heatmap
                     </button>
                     <button id="refreshData" class="flex-1 md:flex-none px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition flex items-center justify-center">
                         <i class="fas fa-sync-alt mr-2"></i>Refresh
                     </button>
+                    <button id="downloadData" class="flex-1 md:flex-none px-3 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition flex items-center justify-center">
+                        <i class="fas fa-download mr-2"></i>Data
+                    </button>
                 </div>
             </div>
             
-            <div id="map" style="height: 400px; width: 100%;" class="z-0 border-b"></div>
+            <div id="map" style="height: 500px; width: 100%; min-height: 400px;" class="z-0 border-b bg-gray-200"></div>
             
             <!-- Map Controls & Legend -->
             <div class="p-6 grid grid-cols-1 md:grid-cols-3 gap-8">

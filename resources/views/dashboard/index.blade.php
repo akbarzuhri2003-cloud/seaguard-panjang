@@ -103,7 +103,7 @@
     </div>
 </div>
 
-@if(empty($predictions))
+@if(!$hasData)
     <div class="bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-500 p-8 rounded-xl shadow-lg mb-8 text-center">
         <div class="bg-blue-100 dark:bg-blue-800 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4">
             <i class="fas fa-database text-4xl text-blue-600 dark:text-blue-300"></i>

@@ -134,6 +134,12 @@
                     <a href="/maps" class="px-3 py-2 rounded-lg hover:bg-white/10 transition flex items-center text-sm {{ request()->is('maps') ? 'bg-white/20' : '' }}">
                         <i class="fas fa-map mr-2"></i>Peta
                     </a>
+                    <form action="/logout" method="POST" class="inline">
+                        @csrf
+                        <button type="submit" class="px-3 py-2 rounded-lg hover:bg-white/10 transition flex items-center text-sm text-red-200 hover:text-white">
+                            <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                        </button>
+                    </form>
                 </div>
 
                 <!-- Mobile Menu Button -->
@@ -157,6 +163,12 @@
                 <a href="/maps" class="block px-4 py-3 rounded-lg hover:bg-white/10 transition flex items-center {{ request()->is('maps') ? 'bg-white/20' : '' }}">
                     <i class="fas fa-map w-8"></i>Peta Interaktif
                 </a>
+                <form action="/logout" method="POST" class="block pt-2">
+                    @csrf
+                    <button type="submit" class="w-full text-left px-4 py-3 rounded-lg hover:bg-white/10 transition flex items-center text-red-300">
+                        <i class="fas fa-sign-out-alt w-8"></i>Logout
+                    </button>
+                </form>
                 <div class="pt-4 mt-4 border-t border-white/10">
                     <div class="flex items-center justify-between text-xs text-blue-200 px-4">
                         <span id="mobile-live-date">-- --- ----</span>

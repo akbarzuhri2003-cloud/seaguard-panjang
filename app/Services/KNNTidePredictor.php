@@ -21,7 +21,7 @@ class KNNTidePredictor
             $historicalData = $this->getHistoricalData($date);
             
             if ($historicalData->isEmpty()) {
-                return $this->getDefaultPrediction($date);
+                return null;
             }
             
             $distances = [];
@@ -72,8 +72,7 @@ class KNNTidePredictor
             return $this->calculatePrediction($nearestNeighbors, $date);
             
         } catch (\Exception $e) {
-            // Fallback jika ada error
-            return $this->getDefaultPrediction($date);
+            return null;
         }
     }
     
@@ -140,7 +139,7 @@ class KNNTidePredictor
     private function calculatePrediction($neighbors, $date)
     {
         if (empty($neighbors)) {
-            return $this->getDefaultPrediction($date);
+            return null;
         }
 
         $totalHeight      = 0;
@@ -193,24 +192,6 @@ class KNNTidePredictor
 
     private function getDefaultPrediction($date)
     {
-        // Jika ada data di DB, gunakan rata-rata sebagai fallback
-        try {
-            $avg = HistoricalTide::avg('height');
-            if ($avg !== null) {
-                $carbonDate = Carbon::parse($date);
-                $avgHeight  = max(0.1, min(4.0, (float)$avg));
-                return [
-                    'date'                  => $date,
-                    'predicted_height'      => round($avgHeight, 2),
-                    'predicted_temperature' => round((float)(HistoricalTide::avg('temperature') ?? 28.5), 1),
-                    'predicted_wind_speed'  => round((float)(HistoricalTide::avg('wind_speed') ?? 3.2), 1),
-                    'tide_type'             => $this->predictTideType($avgHeight, 12),
-                    'confidence'            => 0.3,
-                ];
-            }
-        } catch (\Exception $e) {
-            // ignore
-        }
-        return null;
+        return null; // Disable synthetic fallback to ensure data validity
     }
 }

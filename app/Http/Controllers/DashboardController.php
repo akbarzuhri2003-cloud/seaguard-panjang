@@ -44,7 +44,6 @@ class DashboardController extends Controller
                 $predictions = [];
             }
             
-            // Data untuk chart
             $chartData = [
                 'dates' => !empty($predictions) ? array_map(function($prediction) {
                     return \Carbon\Carbon::parse($prediction['date'])->format('d M');
@@ -55,7 +54,7 @@ class DashboardController extends Controller
                 'tide_types' => !empty($predictions) ? array_column($predictions, 'tide_type') : [],
             ];
 
-            return compact('predictions', 'chartData');
+            return compact('predictions', 'chartData', 'hasData');
         });
         
         return view('dashboard.index', $data);
