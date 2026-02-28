@@ -88,51 +88,63 @@
                 </div>
                 
                 <!-- Desktop Menu -->
-                <div class="hidden md:flex items-center space-x-1">
-                    <a href="/dashboard" class="px-3 py-2 rounded-lg hover:bg-white/10 transition flex items-center text-sm">
-                        <i class="fas fa-tachometer-alt mr-2"></i>Dashboard
+                <div class="hidden lg:flex items-center space-x-1">
+                    <a href="/dashboard" class="px-3 py-2 rounded-xl hover:bg-white/10 transition-all flex items-center text-sm font-bold uppercase tracking-tight">
+                        <i class="fas fa-tachometer-alt mr-2 opacity-80"></i>Dashboard
                     </a>
-                    <a href="/weekly-prediction" class="px-3 py-2 rounded-lg hover:bg-white/10 transition flex items-center text-sm">
-                        <i class="fas fa-chart-line mr-2"></i>Prediksi
+                    <a href="/weekly-prediction" class="px-3 py-2 rounded-xl hover:bg-white/10 transition-all flex items-center text-sm font-bold uppercase tracking-tight">
+                        <i class="fas fa-chart-line mr-2 opacity-80"></i>Prediksi
                     </a>
-                    <a href="/maps" class="px-3 py-2 rounded-lg bg-white/20 transition flex items-center text-sm">
+                    <a href="/maps" class="px-3 py-2 rounded-xl bg-white/20 transition-all flex items-center text-sm font-bold uppercase tracking-tight shadow-inner">
                         <i class="fas fa-map mr-2"></i>Peta
                     </a>
-                    <form action="/logout" method="POST" class="inline">
+                    <form action="/logout" method="POST" class="inline ml-2">
                         @csrf
-                        <button type="submit" class="px-3 py-2 rounded-lg hover:bg-white/10 transition flex items-center text-sm text-red-200 hover:text-white">
+                        <button type="submit" class="px-4 py-2 bg-red-500/20 hover:bg-red-500/40 text-red-100 hover:text-white rounded-xl transition-all flex items-center text-sm font-bold border border-red-500/20">
                             <i class="fas fa-sign-out-alt mr-2"></i>Logout
                         </button>
                     </form>
                 </div>
 
                 <!-- Mobile Menu Button -->
-                <div class="md:hidden flex items-center">
-                    <button id="mobile-menu-button" class="text-white hover:text-blue-200 focus:outline-none p-2 rounded-lg hover:bg-white/10">
-                        <i class="fas fa-bars text-xl"></i>
+                <div class="lg:hidden flex items-center">
+                    <button id="mobile-menu-button-trigger" class="text-white hover:text-blue-200 focus:outline-none p-2 rounded-xl hover:bg-white/10 transition-all border border-white/10">
+                        <i class="fas fa-bars text-xl" id="menu-icon-map"></i>
                     </button>
                 </div>
             </div>
         </div>
 
-        <!-- Mobile Menu -->
-        <div id="mobile-menu" class="hidden md:hidden bg-blue-900/95 backdrop-blur-md border-t border-white/10">
-            <div class="px-4 pt-2 pb-6 space-y-2">
-                <a href="/dashboard" class="block px-4 py-3 rounded-lg hover:bg-white/10 transition flex items-center">
-                    <i class="fas fa-tachometer-alt w-8"></i>Dashboard
+        <!-- Mobile Menu (Hidden by default) -->
+        <div id="mobile-menu-map" class="hidden lg:hidden bg-blue-900/98 backdrop-blur-xl border-t border-white/10 shadow-2xl overflow-hidden transition-all duration-300 max-h-0">
+            <div class="px-4 pt-4 pb-8 space-y-3">
+                <a href="/dashboard" class="block px-4 py-4 rounded-2xl hover:bg-white/10 transition-all flex items-center">
+                    <div class="w-10 h-10 rounded-xl bg-blue-400/10 flex items-center justify-center mr-4">
+                        <i class="fas fa-tachometer-alt text-blue-300"></i>
+                    </div>
+                    <span class="text-base font-bold text-white">Dashboard</span>
                 </a>
-                <a href="/weekly-prediction" class="block px-4 py-3 rounded-lg hover:bg-white/10 transition flex items-center">
-                    <i class="fas fa-chart-line w-8"></i>Prediksi Mingguan
+                <a href="/weekly-prediction" class="block px-4 py-4 rounded-2xl hover:bg-white/10 transition-all flex items-center">
+                    <div class="w-10 h-10 rounded-xl bg-purple-400/10 flex items-center justify-center mr-4">
+                        <i class="fas fa-chart-line text-purple-300"></i>
+                    </div>
+                    <span class="text-base font-bold text-white">Prediksi Mingguan</span>
                 </a>
-                <a href="/maps" class="block px-4 py-3 rounded-lg bg-white/20 flex items-center">
-                    <i class="fas fa-map w-8"></i>Peta Interaktif
+                <a href="/maps" class="block px-4 py-4 rounded-2xl bg-white/20 flex items-center border-l-4 border-blue-400">
+                    <div class="w-10 h-10 rounded-xl bg-green-400/10 flex items-center justify-center mr-4">
+                        <i class="fas fa-map text-green-300"></i>
+                    </div>
+                    <span class="text-base font-bold text-white">Peta Interaktif</span>
                 </a>
-                <form action="/logout" method="POST" class="block pt-2">
-                    @csrf
-                    <button type="submit" class="w-full text-left px-4 py-3 rounded-lg hover:bg-white/10 transition flex items-center text-red-300">
-                        <i class="fas fa-sign-out-alt w-8"></i>Logout
-                    </button>
-                </form>
+                <div class="pt-4 border-t border-white/10">
+                    <form action="/logout" method="POST" class="block">
+                        @csrf
+                        <button type="submit" class="w-full text-left px-4 py-4 rounded-2xl bg-red-500/10 hover:bg-red-500/20 transition-all flex items-center text-red-300">
+                            <i class="fas fa-sign-out-alt w-8"></i>
+                            <span class="font-bold">Logout</span>
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
     </nav>
@@ -140,36 +152,46 @@
     <!-- Main Content -->
     <main class="max-w-7xl mx-auto px-4 py-6 md:py-8">
         <!-- Header -->
-        <div class="mb-6 md:mb-8">
-            <h1 class="text-2xl md:text-3xl font-black text-gray-800 leading-tight">Peta Lokasi & Heatmap</h1>
-            <p class="text-xs md:text-sm text-gray-500 mt-1 flex items-center">
+        <div class="mb-8 px-1">
+            <div class="flex items-center space-x-2 mb-2">
+                <span class="w-2 h-8 bg-blue-600 rounded-full"></span>
+                <h1 class="text-2xl md:text-3xl font-black text-gray-800 leading-tight uppercase tracking-tight">Peta Lokasi & Heatmap</h1>
+            </div>
+            <p class="text-[10px] md:text-sm text-gray-500 flex items-center font-medium">
                 <i class="fas fa-map-marked-alt mr-2 text-blue-500"></i>
-                <span id="totalSensorsDisplay" class="font-bold">{{ count($locations) }} Sensor Aktif</span>
-                <span class="mx-2">•</span>
-                <span class="font-medium" id="mapTime">--:--:--</span> WIB
+                <span id="totalSensorsDisplay" class="font-bold text-gray-700">{{ count($locations) }} Sensor Aktif</span>
+                <span class="mx-3 text-gray-300">|</span>
+                <i class="fas fa-clock mr-2 text-blue-400"></i>
+                <span class="font-bold text-gray-700" id="mapTime">--:--:--</span> <span class="ml-1 text-[9px]">WIB</span>
             </p>
         </div>
 
         <!-- Stats Bar -->
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-            <div class="bg-white rounded-xl shadow-md p-4 border-l-4 border-blue-500">
-                <p class="text-[10px] md:text-xs text-gray-400 font-black uppercase tracking-widest">Total Sensor</p>
-                <p class="text-lg md:text-xl font-black text-gray-800 mt-1">{{ $stats['total_sensors'] }}</p>
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-8">
+            <div class="bg-white rounded-2xl shadow-xl p-4 border-l-4 border-blue-500 transition-all hover:scale-[1.02]">
+                <p class="text-[8px] md:text-[10px] text-gray-400 font-black uppercase tracking-widest mb-1">Total Sensor</p>
+                <p class="text-lg md:text-2xl font-black text-gray-800">{{ $stats['total_sensors'] }}</p>
             </div>
             
-            <div class="bg-white rounded-xl shadow-md p-4 border-l-4 border-red-500">
-                <p class="text-[10px] md:text-xs text-gray-400 font-black uppercase tracking-widest">Pasang Tinggi</p>
-                <p class="text-lg md:text-xl font-black text-gray-800 mt-1">{{ $stats['high_tide_locations'] }}</p>
+            <div class="bg-white rounded-2xl shadow-xl p-4 border-l-4 border-red-500 transition-all hover:scale-[1.02]">
+                <p class="text-[8px] md:text-[10px] text-gray-400 font-black uppercase tracking-widest mb-1">Pasang Tinggi</p>
+                <div class="flex items-center">
+                    <p class="text-lg md:text-2xl font-black text-gray-800">{{ $stats['high_tide_locations'] }}</p>
+                    <span class="ml-2 text-[8px] bg-red-50 text-red-500 px-1.5 py-0.5 rounded-lg font-black uppercase border border-red-100">WASPADA</span>
+                </div>
             </div>
             
-            <div class="bg-white rounded-xl shadow-md p-4 border-l-4 border-green-500">
-                <p class="text-[10px] md:text-xs text-gray-400 font-black uppercase tracking-widest">Tinggi Rerata</p>
-                <p class="text-lg md:text-xl font-black text-gray-800 mt-1">{{ $stats['avg_height'] }}m</p>
+            <div class="bg-white rounded-2xl shadow-xl p-4 border-l-4 border-green-500 transition-all hover:scale-[1.02]">
+                <p class="text-[8px] md:text-[10px] text-gray-400 font-black uppercase tracking-widest mb-1">Tinggi Rerata</p>
+                <p class="text-lg md:text-2xl font-black text-gray-800">{{ $stats['avg_height'] }}<span class="text-xs font-normal ml-1">m</span></p>
             </div>
             
-            <div class="bg-white rounded-xl shadow-md p-4 border-l-4 border-purple-500">
-                <p class="text-[10px] md:text-xs text-gray-400 font-black uppercase tracking-widest">Data Update</p>
-                <p id="lastUpdateTime" class="text-[10px] md:text-sm font-bold text-gray-600 mt-1 leading-tight">{{ \Carbon\Carbon::parse($stats['last_data_update'])->format('H:i:s') }}</p>
+            <div class="bg-white rounded-2xl shadow-xl p-4 border-l-4 border-purple-500 transition-all hover:scale-[1.02]">
+                <p class="text-[8px] md:text-[10px] text-gray-400 font-black uppercase tracking-widest mb-1">Data Update</p>
+                <div class="flex items-center text-purple-600 font-black">
+                    <i class="fas fa-sync-alt fa-spin mr-2 text-[10px]"></i>
+                    <p id="lastUpdateTime" class="text-xs md:text-sm">{{ \Carbon\Carbon::parse($stats['last_data_update'])->format('H:i:s') }}</p>
+                </div>
             </div>
         </div>
 
@@ -417,13 +439,27 @@
             setInterval(updateAllTimes, 1000);
             initMap();
             
+        document.addEventListener('DOMContentLoaded', function() {
+            updateAllTimes();
+            setInterval(updateAllTimes, 1000);
+            initMap();
+            
             // Mobile Menu Toggle
-            const mobileMenuButton = document.getElementById('mobile-menu-button');
-            const mobileMenu = document.getElementById('mobile-menu');
+            const mobileMenuButton = document.getElementById('mobile-menu-button-trigger');
+            const mobileMenu = document.getElementById('mobile-menu-map');
+            const menuIcon = document.getElementById('menu-icon-map');
             
             if (mobileMenuButton && mobileMenu) {
                 mobileMenuButton.addEventListener('click', () => {
-                    mobileMenu.classList.toggle('hidden');
+                    if (mobileMenu.classList.contains('hidden')) {
+                        mobileMenu.classList.remove('hidden');
+                        setTimeout(() => { mobileMenu.style.maxHeight = '1000px'; }, 10);
+                        menuIcon.classList.replace('fa-bars', 'fa-times');
+                    } else {
+                        mobileMenu.style.maxHeight = '0';
+                        setTimeout(() => { mobileMenu.classList.add('hidden'); }, 300);
+                        menuIcon.classList.replace('fa-times', 'fa-bars');
+                    }
                 });
             }
         });

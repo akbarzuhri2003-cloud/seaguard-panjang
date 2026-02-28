@@ -61,37 +61,38 @@
     </div>
     
     <!-- Login Card -->
-    <div class="login-card rounded-2xl shadow-2xl p-8 w-full max-w-md">
+    <div class="login-card rounded-[2rem] shadow-2xl p-6 md:p-10 w-full max-w-md relative overflow-hidden group">
+        <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-400"></div>
+        
         <!-- Logo -->
-        <div class="text-center mb-8">
-            <div class="wave-animation inline-block mb-4">
-                <div class="w-20 h-20 bg-gradient-to-r from-blue-500 to-cyan-400 rounded-full flex items-center justify-center mx-auto">
-                    <i class="fas fa-water text-3xl text-white"></i>
+        <div class="text-center mb-10 relative z-10">
+            <div class="wave-animation inline-block mb-6">
+                <div class="w-24 h-24 bg-white dark:bg-gray-800 rounded-3xl flex items-center justify-center mx-auto shadow-2xl border border-white/20 transform rotate-12 group-hover:rotate-0 transition-all duration-700">
+                    <i class="fas fa-water text-4xl text-blue-500"></i>
                 </div>
             </div>
-            <h1 class="text-3xl font-bold text-gray-800 mb-2">SeaGuard Panjang</h1>
-            <p class="text-gray-600">Sistem Prediksi Pasang Surut Air Laut</p>
-            <p class="text-sm text-blue-500 mt-2">Bandar Lampung - Panjang</p>
+            <h1 class="text-3xl md:text-4xl font-black text-gray-800 leading-tight tracking-tight uppercase">SeaGuard</h1>
+            <p class="text-[10px] md:text-xs font-black text-blue-500 uppercase tracking-[0.3em] mt-2">Panjang Prediksi System</p>
         </div>
         
         <!-- Error Messages -->
         @if($errors->any())
-            <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
-                <div class="flex items-center">
-                    <i class="fas fa-exclamation-circle mr-2"></i>
-                    <span class="font-medium">Login gagal!</span>
+            <div class="bg-red-500/10 border border-red-500/20 text-red-600 px-4 py-4 rounded-2xl mb-8 backdrop-blur-md animate-shake">
+                <div class="flex items-center text-sm font-black uppercase tracking-widest mb-2">
+                    <i class="fas fa-exclamation-triangle mr-2"></i>
+                    <span>Akses Ditolak</span>
                 </div>
-                <ul class="mt-2 text-sm">
+                <ul class="text-[10px] font-bold space-y-1">
                     @foreach($errors->all() as $error)
-                        <li>{{ $error }}</li>
+                        <li>• {{ $error }}</li>
                     @endforeach
                 </ul>
             </div>
         @endif
         
         @if(session('status'))
-            <div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg mb-6">
-                <div class="flex items-center">
+            <div class="bg-green-500/10 border border-green-500/20 text-green-600 px-4 py-4 rounded-2xl mb-8 backdrop-blur-md">
+                <div class="flex items-center text-sm font-black uppercase tracking-widest">
                     <i class="fas fa-check-circle mr-2"></i>
                     <span>{{ session('status') }}</span>
                 </div>
@@ -99,67 +100,75 @@
         @endif
         
         <!-- Login Form -->
-        <form method="POST" action="{{ route('login.post') }}">
+        <form method="POST" action="{{ route('login.post') }}" class="relative z-10">
             @csrf
             
             <div class="space-y-6">
                 <!-- Email -->
                 <div>
-                    <label class="block text-gray-700 text-sm font-medium mb-2" for="email">
-                        <i class="fas fa-envelope mr-2"></i>Email Address
+                    <label class="block text-gray-500 text-[10px] font-black uppercase tracking-widest mb-2 px-1" for="email">
+                        Alamat Email
                     </label>
-                    <input type="email" id="email" name="email" 
-                           value="{{ old('email') }}"
-                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                           placeholder="admin@seaguard.id"
-                           required
-                           autofocus>
+                    <div class="relative group">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-blue-500 transition-colors">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <input type="email" id="email" name="email" 
+                               value="{{ old('email') }}"
+                               class="w-full pl-11 pr-4 py-4 bg-gray-50/50 border border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all font-bold text-gray-800 placeholder-gray-400"
+                               placeholder="admin@seaguard.id"
+                               required
+                               autofocus>
+                    </div>
                 </div>
                 
                 <!-- Password -->
                 <div>
-                    <label class="block text-gray-700 text-sm font-medium mb-2" for="password">
-                        <i class="fas fa-lock mr-2"></i>Password
+                    <label class="block text-gray-500 text-[10px] font-black uppercase tracking-widest mb-2 px-1" for="password">
+                        Kata Sandi
                     </label>
-                    <input type="password" id="password" name="password" 
-                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                           placeholder="••••••••"
-                           required>
+                    <div class="relative group">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-blue-500 transition-colors">
+                            <i class="fas fa-key"></i>
+                        </div>
+                        <input type="password" id="password" name="password" 
+                               class="w-full pl-11 pr-4 py-4 bg-gray-50/50 border border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all font-bold text-gray-800 placeholder-gray-400"
+                               placeholder="••••••••"
+                               required>
+                    </div>
                 </div>
                 
                 <!-- Remember Me -->
-                <div class="flex items-center">
-                    <input type="checkbox" id="remember" name="remember" class="w-4 h-4 text-blue-600 rounded">
-                    <label for="remember" class="ml-2 text-sm text-gray-600">Ingat saya</label>
+                <div class="flex items-center justify-between px-1">
+                    <label class="flex items-center cursor-pointer group">
+                        <input type="checkbox" id="remember" name="remember" class="w-5 h-5 text-blue-600 rounded-lg border-gray-300 focus:ring-blue-500 transition-all">
+                        <span class="ml-3 text-xs font-bold text-gray-500 group-hover:text-gray-700 transition-colors">Ingat saya</span>
+                    </label>
                 </div>
                 
                 <!-- Submit Button -->
                 <button type="submit" 
-                        class="w-full bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-semibold py-3 rounded-lg hover:from-blue-600 hover:to-cyan-600 transition duration-300 shadow-lg hover:shadow-xl">
-                    <i class="fas fa-sign-in-alt mr-2"></i>Masuk ke Sistem
+                        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-4 rounded-2xl shadow-xl shadow-blue-500/20 transition-all hover:scale-[1.02] active:scale-95 flex items-center justify-center text-sm uppercase tracking-widest">
+                    <span>Otorisasi Sistem</span>
+                    <i class="fas fa-chevron-right ml-3 text-xs opacity-50 group-hover:translate-x-1 transition-transform"></i>
                 </button>
             </div>
         </form>
         
         <!-- Demo Credentials -->
-        <div class="mt-8 pt-6 border-t border-gray-200">
+        <div class="mt-10 pt-8 border-t border-gray-100/50 relative z-10">
             <div class="text-center">
-                <p class="text-sm text-gray-600 mb-2">
-                    <i class="fas fa-info-circle mr-2"></i>
-                    Gunakan Username dan Password Ini:
+                <p class="text-[9px] font-black text-gray-400 uppercase tracking-[0.2em] mb-4">
+                    Kredensial Otoritas
                 </p>
-                <div class="bg-gray-50 rounded-lg p-3 text-left">
-                    <div class="text-sm">
-                        <div class="flex items-center mb-1">
-                            <i class="fas fa-user text-gray-500 mr-2 w-4"></i>
-                            <span class="font-medium">Email:</span>
-                            <code class="ml-2 bg-gray-100 px-2 py-1 rounded">admin@seaguard.id</code>
-                        </div>
-                        <div class="flex items-center">
-                            <i class="fas fa-key text-gray-500 mr-2 w-4"></i>
-                            <span class="font-medium">Password:</span>
-                            <code class="ml-2 bg-gray-100 px-2 py-1 rounded">password123</code>
-                        </div>
+                <div class="bg-blue-50/50 rounded-2xl p-4 border border-blue-100 flex flex-col gap-3">
+                    <div class="flex items-center justify-between bg-white px-4 py-2 rounded-xl shadow-sm border border-blue-50">
+                        <span class="text-[10px] font-black text-gray-400 uppercase">User</span>
+                        <code class="text-[10px] font-black text-blue-600">admin@seaguard.id</code>
+                    </div>
+                    <div class="flex items-center justify-between bg-white px-4 py-2 rounded-xl shadow-sm border border-blue-50">
+                        <span class="text-[10px] font-black text-gray-400 uppercase">Pass</span>
+                        <code class="text-[10px] font-black text-blue-600">password123</code>
                     </div>
                 </div>
             </div>

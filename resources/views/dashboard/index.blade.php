@@ -3,20 +3,23 @@
 @section('title', 'Dashboard')
 
 @section('content')
-<div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4 px-1">
     <div class="w-full">
-        <h1 class="text-2xl md:text-3xl font-bold text-gray-800 dark:text-white leading-tight">Dashboard Prediksi</h1>
-        <p class="text-xs md:text-sm text-gray-600 dark:text-gray-300 mt-1 flex items-center">
+        <div class="flex items-center space-x-2 mb-1">
+            <span class="w-2 h-8 bg-blue-600 rounded-full"></span>
+            <h1 class="text-2xl md:text-4xl font-black text-gray-800 dark:text-white leading-tight tracking-tight uppercase">Dashboard Prediksi</h1>
+        </div>
+        <p class="text-[10px] md:text-sm text-gray-500 dark:text-gray-400 flex items-center font-medium">
             <i class="fas fa-map-marker-alt mr-2 text-blue-500"></i>
-            Pelabuhan Panjang, Bandar Lampung
+            Pelabuhan Panjang • Bandar Lampung, Indonesia
         </p>
     </div>
     
     <div class="w-full md:w-auto">
         <button onclick="document.getElementById('importModal').classList.remove('hidden')" 
-                class="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-5 rounded-xl shadow-lg flex items-center justify-center transition duration-200">
-            <i class="fas fa-file-upload mr-2"></i>
-            Import Data Excel
+                class="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white font-black py-3 px-6 rounded-2xl shadow-xl shadow-blue-500/20 flex items-center justify-center transition-all hover:scale-[1.02] active:scale-95 text-xs uppercase tracking-widest">
+            <i class="fas fa-file-upload mr-3 text-sm"></i>
+            Import Data
         </button>
     </div>
 </div>
@@ -125,101 +128,130 @@
     </div>
 @else
 <!-- Stats Grid -->
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4 mb-8">
+<div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-6 gap-3 md:gap-4 mb-8">
     <!-- Time Card -->
-    <div class="time-card rounded-xl shadow-lg p-5 sm:col-span-2 lg:col-span-2 relative overflow-hidden">
-        <div class="absolute top-0 right-0 p-4 opacity-10">
-            <i class="fas fa-clock text-6xl"></i>
+    <div class="time-card rounded-2xl shadow-xl p-5 col-span-2 lg:col-span-2 relative overflow-hidden group">
+        <div class="absolute -top-4 -right-4 p-8 opacity-10 group-hover:scale-110 transition-transform">
+            <i class="fas fa-clock text-7xl"></i>
         </div>
         <div class="relative z-10 flex flex-col justify-between h-full">
             <div class="flex items-center justify-between mb-4">
                 <div>
-                    <p class="text-[10px] md:text-xs font-bold uppercase tracking-widest text-blue-200">Waktu Live (WIB)</p>
-                    <div class="digital-clock text-3xl font-black mt-1" id="currentTimeWIB">--:--:--</div>
+                    <p class="text-[9px] md:text-xs font-black uppercase tracking-[0.2em] text-blue-200/80">Waktu Live (WIB)</p>
+                    <div class="digital-clock text-3xl md:text-4xl font-black mt-1 drop-shadow-lg" id="currentTimeWIB">--:--:--</div>
                 </div>
-                <div class="w-12 h-12 bg-white/20 rounded-xl backdrop-blur-sm flex items-center justify-center border border-white/20">
+                <div class="w-12 h-12 bg-white/20 rounded-2xl backdrop-blur-md flex items-center justify-center border border-white/20 shadow-inner">
                     <i class="fas fa-water text-2xl text-white"></i>
                 </div>
             </div>
             
             <div>
-                <div class="flex justify-between text-[10px] text-blue-200 mb-1">
+                <div class="flex justify-between text-[9px] font-bold text-blue-200/60 mb-2 uppercase tracking-widest">
                     <span>00:00</span>
-                    <span id="currentHour" class="font-bold underline">--:--</span>
+                    <span id="currentHour" class="text-white px-2 bg-black/20 rounded text-[10px]">--:--</span>
                     <span>23:59</span>
                 </div>
-                <div class="h-2 bg-black/20 rounded-full overflow-hidden border border-white/10">
-                    <div class="h-full bg-white/60 rounded-full shadow-[0_0_8px_rgba(255,255,255,0.5)] transition-all duration-1000" id="timeProgress"></div>
+                <div class="h-2.5 bg-black/30 rounded-full overflow-hidden border border-white/10 p-[1px]">
+                    <div class="h-full bg-gradient-to-r from-blue-300 to-white rounded-full shadow-[0_0_12px_rgba(255,255,255,0.8)] transition-all duration-1000" id="timeProgress"></div>
                 </div>
-                <p class="text-blue-100/80 text-[10px] sm:text-xs mt-3 italic" id="currentDateWIB">-- --- ----</p>
+                <p class="text-blue-100 text-[10px] sm:text-xs mt-4 font-bold tracking-wide flex items-center" id="currentDateWIB">
+                    <i class="fas fa-calendar-day mr-2 opacity-60"></i>-- --- ----
+                </p>
             </div>
         </div>
     </div>
 
     <!-- Stat Cards -->
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:col-span-2 lg:col-span-4">
-        <!-- Stat Card 1: Tinggi Air (KNN) -->
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 border-b-4 border-blue-500 hover:shadow-lg transition-all">
-            <div class="flex flex-col h-full justify-between">
-                <div class="flex items-center justify-between mb-2">
-                    <p class="text-gray-500 dark:text-gray-300 text-[10px] font-bold uppercase tracking-tight">Tinggi Air</p>
-                    <div class="w-8 h-8 bg-blue-50 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-water text-blue-500 text-sm"></i>
-                    </div>
+    <!-- Tinggi Air -->
+    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-4 border-b-4 border-blue-500 hover:shadow-2xl transition-all group overflow-hidden relative">
+        <div class="absolute -bottom-2 -right-2 opacity-5 text-4xl group-hover:scale-125 transition-transform"><i class="fas fa-water"></i></div>
+        <div class="flex flex-col h-full justify-between relative z-10">
+            <div class="flex items-center justify-between mb-3">
+                <p class="text-gray-400 dark:text-gray-500 text-[10px] font-black uppercase tracking-widest">Tinggi Air</p>
+                <div class="w-8 h-8 bg-blue-50 dark:bg-blue-900/30 rounded-xl flex items-center justify-center border border-blue-100 dark:border-blue-800">
+                    <i class="fas fa-tint text-blue-500 text-sm"></i>
                 </div>
-                <div>
-                    <h3 class="text-xl md:text-2xl font-black text-gray-800 dark:text-white truncate" id="liveHeight">-- m</h3>
-                    <p class="text-[10px] mt-1" id="liveStatus">--</p>
+            </div>
+            <div>
+                <h3 class="text-xl md:text-2xl font-black text-gray-800 dark:text-white truncate" id="liveHeight">-- m</h3>
+                <div class="mt-2 inline-flex items-center px-2 py-0.5 rounded-lg bg-blue-50 dark:bg-blue-900/30 text-[9px] font-black text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-800" id="liveStatus">
+                    --
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- Stat Card 2: Suhu -->
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 border-b-4 border-green-500 hover:shadow-lg transition-all">
-            <div class="flex flex-col h-full justify-between">
-                <div class="flex items-center justify-between mb-2">
-                    <p class="text-gray-500 dark:text-gray-300 text-[10px] font-bold uppercase tracking-tight">Suhu Udara</p>
-                    <div class="w-8 h-8 bg-green-50 dark:bg-green-900/30 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-thermometer-half text-green-500 text-sm"></i>
-                    </div>
+    <!-- Suhu -->
+    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-4 border-b-4 border-green-500 hover:shadow-2xl transition-all group overflow-hidden relative">
+        <div class="absolute -bottom-2 -right-2 opacity-5 text-4xl group-hover:scale-125 transition-transform"><i class="fas fa-thermometer-half"></i></div>
+        <div class="flex flex-col h-full justify-between relative z-10">
+            <div class="flex items-center justify-between mb-3">
+                <p class="text-gray-400 dark:text-gray-500 text-[10px] font-black uppercase tracking-widest">Suhu</p>
+                <div class="w-8 h-8 bg-green-50 dark:bg-green-900/30 rounded-xl flex items-center justify-center border border-green-100 dark:border-green-800">
+                    <i class="fas fa-sun text-green-500 text-sm"></i>
                 </div>
-                <div>
-                    <h3 class="text-xl md:text-2xl font-black text-gray-800 dark:text-white truncate" id="liveTemp">--°C</h3>
-                    <p class="text-[10px] text-gray-500" id="liveHumidity">H: --%</p>
+            </div>
+            <div>
+                <h3 class="text-xl md:text-2xl font-black text-gray-800 dark:text-white truncate" id="liveTemp">--°C</h3>
+                <p class="text-[9px] font-bold text-gray-400 mt-1 uppercase" id="liveHumidity">H: --%</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Angin -->
+    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-4 border-b-4 border-purple-500 hover:shadow-2xl transition-all group overflow-hidden relative">
+        <div class="absolute -bottom-2 -right-2 opacity-5 text-4xl group-hover:scale-125 transition-transform"><i class="fas fa-wind"></i></div>
+        <div class="flex flex-col h-full justify-between relative z-10">
+            <div class="flex items-center justify-between mb-3">
+                <p class="text-gray-400 dark:text-gray-500 text-[10px] font-black uppercase tracking-widest">Angin</p>
+                <div class="w-8 h-8 bg-purple-50 dark:bg-purple-900/30 rounded-xl flex items-center justify-center border border-purple-100 dark:border-purple-800">
+                    <i class="fas fa-wind text-purple-500 text-sm"></i>
+                </div>
+            </div>
+            <div>
+                <h3 class="text-xl md:text-2xl font-black text-gray-800 dark:text-white truncate" id="liveWind">-- m/s</h3>
+                <p class="text-[9px] font-bold text-gray-400 mt-1 uppercase truncate" id="liveWindDir">--</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tekanan -->
+    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-4 border-b-4 border-orange-500 hover:shadow-2xl transition-all group overflow-hidden relative">
+        <div class="absolute -bottom-2 -right-2 opacity-5 text-4xl group-hover:scale-125 transition-transform"><i class="fas fa-tachometer-alt"></i></div>
+        <div class="flex flex-col h-full justify-between relative z-10">
+            <div class="flex items-center justify-between mb-3">
+                <p class="text-gray-400 dark:text-gray-500 text-[10px] font-black uppercase tracking-widest">Tekanan</p>
+                <div class="w-8 h-8 bg-orange-50 dark:bg-orange-900/30 rounded-xl flex items-center justify-center border border-orange-100 dark:border-orange-800">
+                    <i class="fas fa-compress-alt text-orange-500 text-sm"></i>
+                </div>
+            </div>
+            <div>
+                <h3 class="text-xl md:text-2xl font-black text-gray-800 dark:text-white truncate" id="livePressure">-- hPa</h3>
+                <div class="mt-2 flex items-center space-x-1" id="weatherSource">
+                    <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+                    <span class="text-[8px] font-bold text-gray-400 uppercase tracking-tighter">Live Open-Meteo</span>
                 </div>
             </div>
         </div>
+    </div>
+</div>
 
-        <!-- Stat Card 3: Angin -->
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 border-b-4 border-purple-500 hover:shadow-lg transition-all">
-            <div class="flex flex-col h-full justify-between">
-                <div class="flex items-center justify-between mb-2">
-                    <p class="text-gray-500 dark:text-gray-300 text-[10px] font-bold uppercase tracking-tight">Angin</p>
-                    <div class="w-8 h-8 bg-purple-50 dark:bg-purple-900/30 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-wind text-purple-500 text-sm"></i>
-                    </div>
-                </div>
-                <div>
-                    <h3 class="text-xl md:text-2xl font-black text-gray-800 dark:text-white truncate" id="liveWind">-- m/s</h3>
-                    <p class="text-[10px] text-gray-500 truncate" id="liveWindDir">--</p>
-                </div>
+<!-- Condition Insight (New Section for Description) -->
+<div class="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl shadow-xl p-5 md:p-6 mb-8 text-white relative overflow-hidden group">
+    <div class="absolute top-0 right-0 p-8 opacity-10 group-hover:rotate-12 transition-transform">
+        <i class="fas fa-info-circle text-8xl"></i>
+    </div>
+    <div class="relative z-10">
+        <div class="flex items-center space-x-3 mb-3">
+            <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-md border border-white/20">
+                <i class="fas fa-comment-alt text-white"></i>
             </div>
+            <h4 class="text-base md:text-lg font-black uppercase tracking-widest">Insight Kondisi Air Laut</h4>
         </div>
-
-        <!-- Stat Card 4: Tekanan -->
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 border-b-4 border-orange-500 hover:shadow-lg transition-all">
-            <div class="flex flex-col h-full justify-between">
-                <div class="flex items-center justify-between mb-2">
-                    <p class="text-gray-500 dark:text-gray-300 text-[10px] font-bold uppercase tracking-tight">Tekanan</p>
-                    <div class="w-8 h-8 bg-orange-50 dark:bg-orange-900/30 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-tachometer-alt text-orange-500 text-sm"></i>
-                    </div>
-                </div>
-                <div>
-                    <h3 class="text-xl md:text-2xl font-black text-gray-800 dark:text-white truncate" id="livePressure">-- hPa</h3>
-                    <p class="text-[10px] text-gray-500 truncate" id="weatherSource">Live</p>
-                </div>
-            </div>
+        <div class="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/10">
+            <p class="text-xs md:text-sm leading-relaxed font-medium text-blue-50" id="conditionDescription">
+                Menganalisis data pasang surut...
+            </p>
         </div>
     </div>
 </div>
@@ -335,17 +367,47 @@
 
                 // Update Tide Status Badge
                 const statusEl = document.getElementById('liveStatus');
+                const descEl = document.getElementById('conditionDescription');
                 if (statusEl && data.tide_type) {
                     const typeMap = {
-                        'HIGH_TIDE': { label: 'Pasang Tinggi', icon: 'fa-arrow-up', color: 'text-red-600 dark:text-red-400' },
-                        'LOW_TIDE':  { label: 'Surut',         icon: 'fa-arrow-down', color: 'text-blue-600 dark:text-blue-400' },
-                        'MEDIUM_TIDE': { label: 'Normal',      icon: 'fa-minus', color: 'text-green-600 dark:text-green-400' },
-                        'PASANG': { label: 'Pasang', icon: 'fa-arrow-up', color: 'text-red-600 dark:text-red-400' },
-                        'SURUT': { label: 'Surut', icon: 'fa-arrow-down', color: 'text-blue-600 dark:text-blue-400' }
+                        'HIGH_TIDE': { 
+                            label: 'Pasang Tinggi', 
+                            icon: 'fa-arrow-up', 
+                            color: 'text-red-600 dark:text-red-400',
+                            desc: 'WASPADA - Terdeteksi pasang tinggi. Harap berhati-hati saat melakukan aktivitas di bibir pantai atau dermaga.'
+                        },
+                        'LOW_TIDE':  { 
+                            label: 'Surut',         
+                            icon: 'fa-arrow-down', 
+                            color: 'text-blue-600 dark:text-blue-400',
+                            desc: 'SURUT - Permukaan air rendah. Kapal dengan draf dalam disarankan menunda manuver sandar.'
+                        },
+                        'MEDIUM_TIDE': { 
+                            label: 'Normal',      
+                            icon: 'fa-minus', 
+                            color: 'text-green-600 dark:text-green-400',
+                            desc: 'NORMAL - Kondisi permukaan air stabil dan aman untuk aktivitas dermaga serta pelayaran ringan.'
+                        },
+                        'PASANG': { 
+                            label: 'Pasang', 
+                            icon: 'fa-arrow-up', 
+                            color: 'text-red-600 dark:text-red-400',
+                            desc: 'PASANG - Air laut sedang naik. Perhatikan batas aman di pelabuhan.'
+                        },
+                        'SURUT': { 
+                            label: 'Surut', 
+                            icon: 'fa-arrow-down', 
+                            color: 'text-blue-600 dark:text-blue-400',
+                            desc: 'SURUT - Air laut sedang turun. Kondisi draf kapal perlu dipantau.'
+                        }
                     };
                     const t = typeMap[data.tide_type] || typeMap['MEDIUM_TIDE'];
                     statusEl.innerHTML = `<i class="fas ${t.icon} mr-1"></i>${t.label}`;
-                    statusEl.className = `text-xs ${t.color}`;
+                    statusEl.className = `mt-2 inline-flex items-center px-2 py-0.5 rounded-lg bg-blue-50 dark:bg-blue-900/30 text-[9px] font-black ${t.color}`;
+                    
+                    if (descEl) {
+                        descEl.textContent = t.desc;
+                    }
                 }
 
                 // Update Temperature

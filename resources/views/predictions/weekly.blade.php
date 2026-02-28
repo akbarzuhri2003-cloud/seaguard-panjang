@@ -3,22 +3,25 @@
 @section('title', 'Prediksi Mingguan')
 
 @section('content')
-<div class="mb-8">
+<div class="mb-8 px-1">
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div>
-            <h1 class="text-2xl md:text-3xl font-bold text-gray-800 dark:text-white leading-tight">Prediksi Air Laut</h1>
-            <p class="text-xs md:text-sm text-gray-600 dark:text-gray-300 mt-1">
+        <div class="w-full">
+            <div class="flex items-center space-x-2 mb-1">
+                <span class="w-2 h-8 bg-blue-600 rounded-full"></span>
+                <h1 class="text-2xl md:text-3xl font-black text-gray-800 dark:text-white leading-tight uppercase tracking-tight">Prediksi Air Laut</h1>
+            </div>
+            <p class="text-[10px] md:text-sm text-gray-600 dark:text-gray-300 flex items-center font-medium">
                 <i class="fas fa-chart-line mr-2 text-blue-500"></i>
-                Prediksi 7 hari ke depan (Algoritma KNN)
+                Analisis 7 hari ke depan • Algoritma KNN
             </p>
         </div>
         <div class="flex flex-col sm:flex-row items-stretch sm:items-center space-y-2 sm:space-y-0 sm:space-x-3 w-full md:w-auto">
-            <div class="px-4 py-2 bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 rounded-xl text-sm font-medium flex items-center justify-center">
-                <i class="fas fa-database mr-2"></i>
+            <div class="px-4 py-3 bg-blue-50 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 rounded-2xl text-[10px] font-black uppercase tracking-widest flex items-center justify-center border border-blue-100 dark:border-blue-800 shadow-sm">
+                <i class="fas fa-database mr-2 opacity-50"></i>
                 <span id="dataPoints">0</span> <span class="ml-1">records</span>
             </div>
-            <button onclick="refreshPredictions()" id="refreshButton" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-md transition flex items-center justify-center font-bold">
-                <i class="fas fa-redo-alt mr-2"></i>
+            <button onclick="refreshPredictions()" id="refreshButton" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl shadow-xl shadow-blue-500/20 transition-all hover:scale-[1.02] active:scale-95 flex items-center justify-center font-black text-xs uppercase tracking-widest">
+                <i class="fas fa-redo-alt mr-2" id="refreshIcon"></i>
                 <span id="refreshText">Refresh</span>
             </button>
         </div>
@@ -93,38 +96,38 @@
     </div>
 
     <!-- Grafik Prediksi Mingguan -->
-    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 md:p-6 mb-8">
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-2">
+    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-5 md:p-6 mb-8 border border-gray-100 dark:border-gray-700/50">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
             <div>
-                <h3 class="text-lg font-bold text-gray-800 dark:text-white">Grafik Prediksi 7 Hari</h3>
-                <p class="text-[10px] md:text-sm text-gray-500" id="chartSubtitle">Trend ketinggian air laut</p>
+                <h3 class="text-base md:text-lg font-black text-gray-800 dark:text-white uppercase tracking-tight">Grafik Prediksi 7 Hari</h3>
+                <p class="text-[9px] md:text-sm text-gray-500 font-medium" id="chartSubtitle">Trend ketinggian air laut</p>
             </div>
-            <div class="flex items-center space-x-2">
-                <span class="text-[10px] text-gray-400 uppercase font-bold">Update:</span>
+            <div class="flex items-center space-x-3 bg-blue-50 dark:bg-blue-900/30 px-3 py-1.5 rounded-xl border border-blue-100 dark:border-blue-800">
+                <span class="text-[9px] text-gray-400 dark:text-gray-500 uppercase font-black tracking-widest">Update:</span>
                 <span class="text-[10px] font-black text-blue-600 dark:text-blue-400" id="lastUpdated">--:--</span>
             </div>
         </div>
         
-        <div class="h-64 md:h-96">
+        <div class="h-[250px] md:h-[400px]">
             <canvas id="weeklyChart"></canvas>
         </div>
     </div>
 
     <!-- Tabel Prediksi Detail -->
-    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 md:p-6 mb-8 overflow-hidden">
-        <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-6 flex items-center">
+    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-5 md:p-6 mb-8 overflow-hidden border border-gray-100 dark:border-gray-700/50">
+        <h3 class="text-base md:text-lg font-black text-gray-800 dark:text-white mb-6 flex items-center uppercase tracking-tight">
             <i class="fas fa-table mr-3 text-blue-500"></i>Detail Prediksi Harian
         </h3>
         
-        <div class="overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0">
-            <table class="w-full text-xs md:text-sm">
+        <div class="overflow-x-auto -mx-5 px-5 md:mx-0 md:px-0">
+            <table class="w-full text-xs md:text-sm min-w-[600px]">
                 <thead>
-                    <tr class="border-b dark:border-gray-700 text-gray-400 uppercase tracking-tighter">
-                        <th class="text-left py-4 px-2 font-black">Hari/Tanggal</th>
-                        <th class="text-left py-4 px-2 font-black">Prediksi (m)</th>
-                        <th class="text-left py-4 px-2 font-black">Status</th>
-                        <th class="text-left py-4 px-2 font-black">Pasang/Surut</th>
-                        <th class="text-left py-4 px-2 font-black">Rekomendasi</th>
+                    <tr class="bg-gray-50 dark:bg-gray-900/50 border-b border-gray-100 dark:border-gray-700 text-gray-400 uppercase tracking-widest text-[10px]">
+                        <th class="text-left py-4 px-3 font-black">Hari/Tanggal</th>
+                        <th class="text-left py-4 px-3 font-black">Prediksi (m)</th>
+                        <th class="text-left py-4 px-3 font-black">Status</th>
+                        <th class="text-left py-4 px-3 font-black">Pasang/Surut</th>
+                        <th class="text-left py-4 px-3 font-black">Rekomendasi</th>
                     </tr>
                 </thead>
                 <tbody id="predictionTable" class="divide-y divide-gray-100 dark:divide-gray-700">
@@ -605,6 +608,33 @@
             loadPredictions();
         }
     }, 5 * 60 * 1000); // 5 minutes
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Mobile Menu Toggle with Animation for Weekly Prediction
+        const mobileMenuButton = document.getElementById('mobile-menu-button-trigger');
+        const mobileMenu = document.getElementById('mobile-menu-weekly');
+        const menuIcon = document.getElementById('menu-icon-weekly');
+        
+        if (mobileMenuButton && mobileMenu) {
+            mobileMenuButton.addEventListener('click', () => {
+                if (mobileMenu.classList.contains('hidden')) {
+                    mobileMenu.classList.remove('hidden');
+                    setTimeout(() => {
+                        mobileMenu.style.maxHeight = '1000px';
+                    }, 10);
+                    menuIcon.classList.remove('fa-bars');
+                    menuIcon.classList.add('fa-times');
+                } else {
+                    mobileMenu.style.maxHeight = '0';
+                    setTimeout(() => {
+                        mobileMenu.classList.add('hidden');
+                    }, 300);
+                    menuIcon.classList.remove('fa-times');
+                    menuIcon.classList.add('fa-bars');
+                }
+            });
+        }
+    });
 </script>
 @endsection
 @endsection

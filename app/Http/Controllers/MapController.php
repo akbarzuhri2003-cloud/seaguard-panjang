@@ -87,16 +87,8 @@ class MapController extends Controller
         $predictor = new KNNTidePredictor();
         $today = Carbon::now('Asia/Jakarta');
         $fileName = 'SeaGuard_KNN_Predictions_' . $today->format('Y-m-d') . '.csv';
-        
-        $headers = [
-            "Content-type"        => "text/csv",
-            "Content-Disposition" => "attachment; filename=$fileName",
-            "Pragma"              => "no-cache",
-            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
-            "Expires"             => "0"
-        ];
 
-        $callback = function() use ($predictor, $today) {
+        return response()->streamDownload(function() use ($predictor, $today) {
             $file = fopen('php://output', 'w');
             
             // CSV Headers
@@ -106,7 +98,8 @@ class MapController extends Controller
                 'Jam (WIB)', 
                 'Prediksi Tinggi Air (m)', 
                 'Status Pasang Surut', 
-                'Tingkat Kepercayaan'
+                'Tingkat Kepercayaan',
+                'Keterangan Kondisi'
             ]);
 
             $counter = 1;
@@ -125,21 +118,35 @@ class MapController extends Controller
                     ]);
 
                     if ($prediction) {
+                        $height = $prediction['predicted_height'];
+                        $status = $prediction['tide_type'];
+                        
+                        // Detailed Status Descriptions based on SeaGuard logic
+                        $description = 'NORMAL - Kondisi permukaan air stabil dan aman untuk aktivitas dermaga serta pelayaran ringan.';
+                        if ($status === 'HIGH_TIDE' || $status === 'PASANG') {
+                            if ($height > 2.5) {
+                                $description = 'BAHAYA - Terdeteksi pasang sangat tinggi. Waspada banjir rob atau luapan air di dermaga.';
+                            } else {
+                                $description = 'WASPADA - Terdeteksi pasang tinggi. Harap berhati-hati saat melakukan aktivitas di bibir pantai.';
+                            }
+                        } elseif ($status === 'LOW_TIDE' || $status === 'SURUT') {
+                            $description = 'SURUT - Permukaan air rendah. Kapal dengan draf dalam disarankan menunda manuver sandar.';
+                        }
+
                         fputcsv($file, [
                             $counter++,
                             $curDate->format('d/m/Y'),
                             sprintf('%02d:00', $h),
-                            $prediction['predicted_height'],
-                            $prediction['tide_type'],
-                            round($prediction['confidence'] * 100, 1) . '%'
+                            $height,
+                            $status,
+                            round($prediction['confidence'] * 100, 1) . '%',
+                            $description
                         ]);
                     }
                 }
             }
             
             fclose($file);
-        };
-
-        return response()->stream($callback, 200, $headers);
+        }, $fileName);
     }
 }

@@ -124,55 +124,80 @@
                 </div>
 
                 <!-- Desktop Menu -->
-                <div class="hidden md:flex items-center space-x-1">
-                    <a href="/dashboard" class="px-3 py-2 rounded-lg hover:bg-white/10 transition flex items-center text-sm {{ request()->is('dashboard') ? 'bg-white/20' : '' }}">
-                        <i class="fas fa-tachometer-alt mr-2"></i>Dashboard
+                <div class="hidden lg:flex items-center space-x-1">
+                    <a href="/dashboard" class="px-3 py-2 rounded-xl hover:bg-white/10 transition-all flex items-center text-sm font-bold {{ request()->is('dashboard') ? 'bg-white/20 shadow-inner' : '' }}">
+                        <i class="fas fa-tachometer-alt mr-2 opacity-80"></i>Dashboard
                     </a>
-                    <a href="/weekly-prediction" class="px-3 py-2 rounded-lg hover:bg-white/10 transition flex items-center text-sm {{ request()->is('weekly-prediction') ? 'bg-white/20' : '' }}">
-                        <i class="fas fa-chart-line mr-2"></i>Prediksi
+                    <a href="/weekly-prediction" class="px-3 py-2 rounded-xl hover:bg-white/10 transition-all flex items-center text-sm font-bold {{ request()->is('weekly-prediction') ? 'bg-white/20 shadow-inner' : '' }}">
+                        <i class="fas fa-chart-line mr-2 opacity-80"></i>Prediksi
                     </a>
-                    <a href="/maps" class="px-3 py-2 rounded-lg hover:bg-white/10 transition flex items-center text-sm {{ request()->is('maps') ? 'bg-white/20' : '' }}">
-                        <i class="fas fa-map mr-2"></i>Peta
+                    <a href="/maps" class="px-3 py-2 rounded-xl hover:bg-white/10 transition-all flex items-center text-sm font-bold {{ request()->is('maps') ? 'bg-white/20 shadow-inner' : '' }}">
+                        <i class="fas fa-map mr-2 opacity-80"></i>Peta
                     </a>
-                    <form action="/logout" method="POST" class="inline">
+                    <form action="/logout" method="POST" class="inline ml-2">
                         @csrf
-                        <button type="submit" class="px-3 py-2 rounded-lg hover:bg-white/10 transition flex items-center text-sm text-red-200 hover:text-white">
+                        <button type="submit" class="px-4 py-2 bg-red-500/20 hover:bg-red-500/40 text-red-200 hover:text-white rounded-xl transition-all flex items-center text-sm font-bold border border-red-500/20">
                             <i class="fas fa-sign-out-alt mr-2"></i>Logout
                         </button>
                     </form>
                 </div>
 
-                <!-- Mobile Menu Button -->
-                <div class="md:hidden flex items-center">
-                    <button id="mobile-menu-button" class="text-white hover:text-blue-200 focus:outline-none p-2 rounded-lg hover:bg-white/10">
-                        <i class="fas fa-bars text-xl"></i>
+                <!-- Mobile & Tablet Menu Button -->
+                <div class="lg:hidden flex items-center">
+                    <button id="mobile-menu-button" class="text-white hover:text-blue-200 focus:outline-none p-2 rounded-xl hover:bg-white/10 transition-all border border-transparent hover:border-white/20">
+                        <i class="fas fa-bars text-xl" id="menu-icon"></i>
                     </button>
                 </div>
             </div>
         </div>
 
         <!-- Mobile Menu (Hidden by default) -->
-        <div id="mobile-menu" class="hidden md:hidden bg-blue-900/95 backdrop-blur-md border-t border-white/10">
-            <div class="px-4 pt-2 pb-6 space-y-2">
-                <a href="/dashboard" class="block px-4 py-3 rounded-lg hover:bg-white/10 transition flex items-center {{ request()->is('dashboard') ? 'bg-white/20' : '' }}">
-                    <i class="fas fa-tachometer-alt w-8"></i>Dashboard
+        <div id="mobile-menu" class="hidden lg:hidden bg-blue-900/98 backdrop-blur-xl border-t border-white/10 shadow-2xl overflow-hidden transition-all duration-300 max-h-0">
+            <div class="px-4 pt-4 pb-8 space-y-3">
+                <a href="/dashboard" class="group block px-4 py-4 rounded-2xl hover:bg-white/10 transition-all flex items-center {{ request()->is('dashboard') ? 'bg-white/20 border-l-4 border-blue-400' : '' }}">
+                    <div class="w-10 h-10 rounded-xl bg-blue-400/10 flex items-center justify-center mr-4 group-hover:bg-blue-400/20 transition-all">
+                        <i class="fas fa-tachometer-alt text-blue-300"></i>
+                    </div>
+                    <div>
+                        <span class="block text-base font-bold text-white">Dashboard</span>
+                        <span class="block text-xs text-blue-300">Ringkasan data & statistik</span>
+                    </div>
                 </a>
-                <a href="/weekly-prediction" class="block px-4 py-3 rounded-lg hover:bg-white/10 transition flex items-center {{ request()->is('weekly-prediction') ? 'bg-white/20' : '' }}">
-                    <i class="fas fa-chart-line w-8"></i>Prediksi Mingguan
+                <a href="/weekly-prediction" class="group block px-4 py-4 rounded-2xl hover:bg-white/10 transition-all flex items-center {{ request()->is('weekly-prediction') ? 'bg-white/20 border-l-4 border-blue-400' : '' }}">
+                    <div class="w-10 h-10 rounded-xl bg-purple-400/10 flex items-center justify-center mr-4 group-hover:bg-purple-400/20 transition-all">
+                        <i class="fas fa-chart-line text-purple-300"></i>
+                    </div>
+                    <div>
+                        <span class="block text-base font-bold text-white">Prediksi Mingguan</span>
+                        <span class="block text-xs text-blue-300">Analisis 7 hari ke depan</span>
+                    </div>
                 </a>
-                <a href="/maps" class="block px-4 py-3 rounded-lg hover:bg-white/10 transition flex items-center {{ request()->is('maps') ? 'bg-white/20' : '' }}">
-                    <i class="fas fa-map w-8"></i>Peta Interaktif
+                <a href="/maps" class="group block px-4 py-4 rounded-2xl hover:bg-white/10 transition-all flex items-center {{ request()->is('maps') ? 'bg-white/20 border-l-4 border-blue-400' : '' }}">
+                    <div class="w-10 h-10 rounded-xl bg-green-400/10 flex items-center justify-center mr-4 group-hover:bg-green-400/20 transition-all">
+                        <i class="fas fa-map text-green-300"></i>
+                    </div>
+                    <div>
+                        <span class="block text-base font-bold text-white">Peta Interaktif</span>
+                        <span class="block text-xs text-blue-300">Lokasi & status sensor</span>
+                    </div>
                 </a>
-                <form action="/logout" method="POST" class="block pt-2">
-                    @csrf
-                    <button type="submit" class="w-full text-left px-4 py-3 rounded-lg hover:bg-white/10 transition flex items-center text-red-300">
-                        <i class="fas fa-sign-out-alt w-8"></i>Logout
-                    </button>
-                </form>
-                <div class="pt-4 mt-4 border-t border-white/10">
-                    <div class="flex items-center justify-between text-xs text-blue-200 px-4">
+                
+                <div class="pt-4 border-t border-white/10">
+                    <form action="/logout" method="POST" class="block">
+                        @csrf
+                        <button type="submit" class="w-full text-left px-4 py-4 rounded-2xl bg-red-500/10 hover:bg-red-500/20 transition-all flex items-center text-red-300 group">
+                            <div class="w-10 h-10 rounded-xl bg-red-400/10 flex items-center justify-center mr-4 group-hover:bg-red-400/20 transition-all">
+                                <i class="fas fa-sign-out-alt"></i>
+                            </div>
+                            <span class="text-base font-bold">Keluar Sistem</span>
+                        </button>
+                    </form>
+                </div>
+
+                <div class="pt-4 px-4">
+                    <div class="flex items-center justify-between text-[10px] text-blue-300/60 font-medium uppercase tracking-[0.2em]">
                         <span id="mobile-live-date">-- --- ----</span>
-                        <span id="mobile-live-time" class="font-bold">--:--:--</span>
+                        <span id="mobile-live-time" class="font-black bg-white/5 px-2 py-1 rounded">--:--:--</span>
                     </div>
                 </div>
             </div>
@@ -309,10 +334,26 @@
             }
         }
 
-        // Mobile Menu Toggle
+        // Mobile Menu Toggle with Animation
         document.getElementById('mobile-menu-button').addEventListener('click', function() {
             const mobileMenu = document.getElementById('mobile-menu');
-            mobileMenu.classList.toggle('hidden');
+            const menuIcon = document.getElementById('menu-icon');
+            
+            if (mobileMenu.classList.contains('hidden')) {
+                mobileMenu.classList.remove('hidden');
+                setTimeout(() => {
+                    mobileMenu.style.maxHeight = '1000px';
+                }, 10);
+                menuIcon.classList.remove('fa-bars');
+                menuIcon.classList.add('fa-times');
+            } else {
+                mobileMenu.style.maxHeight = '0';
+                setTimeout(() => {
+                    mobileMenu.classList.add('hidden');
+                }, 300);
+                menuIcon.classList.remove('fa-times');
+                menuIcon.classList.add('fa-bars');
+            }
         });
         
         // Initialize time update
