@@ -85,77 +85,53 @@ class PredictionController extends Controller
     {
         $predictions = [];
         $today = Carbon::today('Asia/Jakarta');
-
-        if ($historicalData->isEmpty()) {
-            return $predictions;
-        }
-
-        // Siapkan data training
-        $trainingData = [];
-        foreach ($historicalData as $data) {
-            try {
-                $date = Carbon::parse($data->date);
-                $trainingData[] = [
-                    'day_of_year' => $date->dayOfYear,
-                    'month'       => $date->month,
-                    'height'      => (float) $data->height,
-                    'date'        => $date->toDateString(),
-                ];
-            } catch (\Exception $e) {
-                continue;
-            }
-        }
+        $predictor = new \App\Services\KNNTidePredictor();
 
         // Prediksi untuk 7 hari ke depan
         for ($i = 0; $i < 7; $i++) {
             $predictionDate = $today->copy()->addDays($i);
-            $dayOfYear      = $predictionDate->dayOfYear;
-            $month          = $predictionDate->month;
-
-            // Cari data historis dengan hari yang mirip (±7 hari dalam setahun)
-            $similarDays = [];
-            foreach ($trainingData as $data) {
-                $dayDiff = abs($data['day_of_year'] - $dayOfYear);
-                // Pertimbangkan wrap-around tahun
-                $dayDiff = min($dayDiff, 365 - $dayDiff);
-
-                if ($dayDiff <= 7) {
-                    $monthDiff  = abs($data['month'] - $month);
-                    $similarity = 1.0 / (1 + $dayDiff * 0.3 + $monthDiff * 0.1);
-                    $similarDays[] = [
-                        'height'     => $data['height'],
-                        'similarity' => $similarity,
-                    ];
+            
+            // Hitung rata-rata dan cari peak harian dengan iterasi per jam
+            $hourlyHeights = [];
+            $totalHeight = 0;
+            $confidenceSum = 0;
+            
+            for ($hour = 0; $hour < 24; $hour++) {
+                $pred = $predictor->predictForDate($predictionDate->toDateString(), [
+                    'temperature' => 28.5,
+                    'pressure' => 1010.5,
+                    'wind_speed' => 3.2,
+                    'moon_phase' => null, // Biar didefinisikan service
+                    'day_of_year' => $predictionDate->dayOfYear,
+                    'hour' => $hour
+                ]);
+                
+                if ($pred) {
+                    $height = $pred['predicted_height'];
+                    $hourlyHeights[$hour] = $height;
+                    $totalHeight += $height;
+                    $confidenceSum += $pred['confidence'];
                 }
             }
 
-            // Hitung rata-rata tertimbang (KNN weighted average)
-            if (!empty($similarDays)) {
-                $totalHeight     = 0;
-                $totalSimilarity = 0;
-                foreach ($similarDays as $day) {
-                    $totalHeight     += $day['height'] * $day['similarity'];
-                    $totalSimilarity += $day['similarity'];
-                }
-                $avgHeight = $totalSimilarity > 0 ? $totalHeight / $totalSimilarity : 0;
+            if (empty($hourlyHeights)) {
+                // Fallback jika tidak ada data sama sekali
+                $avgHeight = 1.5;
+                $highTideHeight = 1.8;
+                $lowTideHeight = 0.5;
+                $highTideHour = 6;
+                $lowTideHour = 12;
+                $avgConfidence = 0.5;
             } else {
-                // Fallback: rata-rata semua data
-                $heights   = array_column($trainingData, 'height');
-                $avgHeight = !empty($heights) ? array_sum($heights) / count($heights) : 1.5;
+                $avgHeight = $totalHeight / count($hourlyHeights);
+                $highTideHeight = max($hourlyHeights);
+                $lowTideHeight = min($hourlyHeights);
+                $highTideHour = array_search($highTideHeight, $hourlyHeights);
+                $lowTideHour = array_search($lowTideHeight, $hourlyHeights);
+                $avgConfidence = $confidenceSum / count($hourlyHeights);
             }
 
-            // Clamp ke range realistis
-            $avgHeight = max(0.1, min(4.0, $avgHeight));
-
-            // Estimasi pasang tertinggi dan surut terendah dari data similar
-            $similarHeights = array_column($similarDays, 'height');
-            $highTideHeight = !empty($similarHeights) ? max($similarHeights) : $avgHeight * 1.3;
-            $lowTideHeight  = !empty($similarHeights) ? min($similarHeights) : $avgHeight * 0.7;
-
-            $highTideHeight = min(4.0, $highTideHeight);
-            $lowTideHeight  = max(0.1, $lowTideHeight);
-
-            $status = $this->determineStatus($avgHeight);
+            $status = $this->determineStatus($highTideHeight); // Status berdasarkan peak
 
             $predictions[] = [
                 'date'               => $predictionDate->toDateString(),
@@ -166,13 +142,12 @@ class PredictionController extends Controller
                 'max_height'         => round($highTideHeight, 2),
                 'min_height'         => round($lowTideHeight, 2),
                 'status'             => $status,
-                'high_tide_time'     => '06:00', // Pola umum Bandar Lampung
+                'high_tide_time'     => sprintf('%02d:00', $highTideHour),
                 'high_tide_height'   => round($highTideHeight, 2),
-                'low_tide_time'      => '12:00',
+                'low_tide_time'      => sprintf('%02d:00', $lowTideHour),
                 'low_tide_height'    => round($lowTideHeight, 2),
                 'recommendation'     => $this->getRecommendation($status),
-                'similar_data_points'=> count($similarDays),
-                'confidence'         => count($similarDays) > 10 ? 'high' : (count($similarDays) > 5 ? 'medium' : 'low'),
+                'confidence'         => round($avgConfidence * 100, 1),
             ];
         }
 
