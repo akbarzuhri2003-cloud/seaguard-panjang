@@ -48,11 +48,6 @@ class MapController extends Controller
         
         foreach ($locations as $key => &$location) {
             $prediction = $predictor->predictForDate($now->toDateString(), [
-                'temperature' => 28.5,
-                'pressure' => 1010.5,
-                'wind_speed' => 3.2,
-                'moon_phase' => 0.5,
-                'day_of_year' => $now->dayOfYear,
                 'hour' => $now->hour
             ]);
             
@@ -60,14 +55,25 @@ class MapController extends Controller
             if ($key == 'beach_1') $variation = -0.3;
             if ($key == 'beach_2') $variation = 0.3;
             
-            $location['current_height'] = $prediction ? round($prediction['predicted_height'] + $variation, 2) : 1.5;
-            $location['status'] = $prediction ? $prediction['tide_type'] : 'NORMAL';
+            $height = $prediction ? ($prediction['predicted_height'] + $variation) : 1.5;
+            $location['current_height'] = round($height, 2);
+            $location['status'] = $prediction ? $prediction['tide_type'] : 'MEDIUM_TIDE';
             $location['last_update'] = $now->format('H:i:s');
         }
         
+        // Generate denser heatmap data (as requested: "heatmap nya kok jadi dikit")
         $heatmapData = [];
-        foreach ($locations as $location) {
-            $heatmapData[] = [$location['lat'], $location['lng'], $location['current_height'] * 10];
+        foreach ($locations as $loc) {
+            // Main point
+            $heatmapData[] = [$loc['lat'], $loc['lng'], $loc['current_height'] * 10];
+            
+            // Jittered points around each location to create a "fuller" heatmap look
+            for ($i = 0; $i < 15; $i++) {
+                $latJitter = (mt_rand(-300, 300) / 100000);
+                $lngJitter = (mt_rand(-300, 300) / 100000);
+                $intensity = ($loc['current_height'] * 8) + (mt_rand(0, 50) / 10);
+                $heatmapData[] = [$loc['lat'] + $latJitter, $loc['lng'] + $lngJitter, $intensity];
+            }
         }
         
         $stats = [
