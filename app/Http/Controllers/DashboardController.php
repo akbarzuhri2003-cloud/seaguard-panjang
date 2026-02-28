@@ -19,6 +19,8 @@ class DashboardController extends Controller
     {
         $cacheKey = 'dashboard_predictions_30_days';
         
+        // If user just imported data, we might need to force refresh or the service already cleared it.
+        // We'll also cache the latest data point for faster dashboard cards.
         $data = \Illuminate\Support\Facades\Cache::remember($cacheKey, now()->addHours(1), function () {
             $predictor = new KNNTidePredictor();
             $today = Carbon::now('Asia/Jakarta');
@@ -299,7 +301,7 @@ class DashboardController extends Controller
         $result = $importService->import($request->file('file'));
 
         if ($result['success']) {
-            $msg = "Data Berhasil Diupload! {$result['count']} poin data berhasil diproses.";
+            $msg = "Data Berhasil Diupload! {$result['count']} poin data berhasil diproses oleh Algoritma KNN untuk pembaruan prediksi.";
             return redirect()->route('dashboard')->with('success', $msg)->with('import_errors', $result['errors']);
         } else {
             $msg = "Gagal Mengupload Data: " . $result['message'];

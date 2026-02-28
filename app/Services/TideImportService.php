@@ -84,8 +84,10 @@ class TideImportService
                 $count += count($chunk);
             }
             
-            // Clear dashboard cache after import
+            // Clear all prediction-related caches after import
             \Illuminate\Support\Facades\Cache::forget('dashboard_predictions_30_days');
+            \Illuminate\Support\Facades\Cache::forget('latest_tide_data');
+            \Log::info("Caches cleared after successful import of {$count} data points.");
             
             return [
                 'success' => true,
