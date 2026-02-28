@@ -169,7 +169,7 @@
             
             <div class="bg-white rounded-xl shadow-md p-4 border-l-4 border-purple-500">
                 <p class="text-[10px] md:text-xs text-gray-400 font-black uppercase tracking-widest">Data Update</p>
-                <p class="text-[10px] md:text-sm font-bold text-gray-600 mt-1 leading-tight">{{ \Carbon\Carbon::parse($stats['last_data_update'])->format('H:i:s') }}</p>
+                <p id="lastUpdateTime" class="text-[10px] md:text-sm font-bold text-gray-600 mt-1 leading-tight">{{ \Carbon\Carbon::parse($stats['last_data_update'])->format('H:i:s') }}</p>
             </div>
         </div>
 
@@ -308,11 +308,14 @@
                              </div>
                         </div>
                         <div class="bg-gray-50 rounded-xl p-3 border border-gray-100">
-                             <p class="text-[8px] text-gray-400 font-black uppercase tracking-widest mb-1">Status</p>
-                             <span class="text-[10px] font-black uppercase tracking-widest
-                                 @if($location['status'] == 'TINGGI') text-red-600 @elseif($location['status'] == 'NORMAL') text-green-600 @else text-yellow-600 @endif">
-                                 {{ $location['status'] }}
-                             </span>
+                             <p class="text-[8px] text-gray-400 font-black uppercase tracking-widest mb-1">Status / Update</p>
+                             <div class="flex flex-col">
+                                 <span class="text-[10px] font-black uppercase tracking-widest
+                                     @if($location['status'] == 'TINGGI') text-red-600 @elseif($location['status'] == 'NORMAL') text-green-600 @else text-yellow-600 @endif">
+                                     {{ $location['status'] }}
+                                 </span>
+                                 <span id="updateTime-{{ $key }}" class="text-[8px] text-gray-400 mt-0.5">{{ $location['last_update'] }}</span>
+                             </div>
                         </div>
                     </div>
                     
@@ -449,6 +452,11 @@
             
             initMapControls();
             updateMapControls();
+
+            // Force recalculate size after a short delay
+            setTimeout(() => {
+                map.invalidateSize();
+            }, 500);
         }
         
         function addMarker(location, key) {
@@ -499,7 +507,12 @@
         }
         
         function initMapControls() {
-            document.getElementById('streetViewBtn').addEventListener('click', function() {
+            const safeAddListener = (id, event, callback) => {
+                const el = document.getElementById(id);
+                if (el) el.addEventListener(event, callback);
+            };
+
+            safeAddListener('streetViewBtn', 'click', function() {
                 if (!streetViewActive) {
                     const center = map.getCenter();
                     showStreetView(center.lat, center.lng);
@@ -512,7 +525,7 @@
                 }
             });
             
-            document.getElementById('heatmapToggle').addEventListener('click', function() {
+            safeAddListener('heatmapToggle', 'click', function() {
                 if (map.hasLayer(heatmapLayer)) {
                     map.removeLayer(heatmapLayer);
                     this.innerHTML = '<i class="fas fa-fire mr-2"></i>Show Heatmap';
@@ -522,17 +535,17 @@
                 }
             });
             
-            document.getElementById('refreshData').addEventListener('click', function() {
+            safeAddListener('refreshData', 'click', function() {
                 refreshMapData();
             });
             
-            document.getElementById('downloadData').addEventListener('click', function() {
+            safeAddListener('downloadData', 'click', function() {
                 downloadMapData();
             });
             
-            document.getElementById('zoomIn').addEventListener('click', () => map.zoomIn());
-            document.getElementById('zoomOut').addEventListener('click', () => map.zoomOut());
-            document.getElementById('resetView').addEventListener('click', () => {
+            safeAddListener('zoomIn', 'click', () => map.zoomIn());
+            safeAddListener('zoomOut', 'click', () => map.zoomOut());
+            safeAddListener('resetView', 'click', () => {
                 map.flyTo([stats.map_center.lat, stats.map_center.lng], stats.zoom_level, { duration: 1 });
             });
         }
@@ -542,9 +555,20 @@
             const time = formatTime(wibTime);
             const date = formatDate(wibTime);
             
-            document.getElementById('liveTime').innerHTML = time.time;
-            document.getElementById('mapTime').innerHTML = time.time;
-            document.getElementById('liveDate').textContent = date.short;
+            const liveTime = document.getElementById('liveTime');
+            if (liveTime) liveTime.innerHTML = time.time;
+            
+            const mapTime = document.getElementById('mapTime');
+            if (mapTime) mapTime.innerHTML = time.time;
+            
+            const liveDate = document.getElementById('liveDate');
+            if (liveDate) liveDate.textContent = date.short;
+
+            const mobileLiveTime = document.getElementById('mobile-live-time');
+            if (mobileLiveTime) mobileLiveTime.innerHTML = time.time;
+
+            const mobileLiveDate = document.getElementById('mobile-live-date');
+            if (mobileLiveDate) mobileLiveDate.textContent = date.full;
         }
         
         function updateMapControls() {
@@ -596,14 +620,16 @@
         function refreshMapData() {
             Object.keys(locations).forEach(key => {
                 const now = new Date().toLocaleTimeString('id-ID');
-                document.getElementById(`updateTime-${key}`).textContent = now;
+                const el = document.getElementById(`updateTime-${key}`);
+                if (el) el.textContent = now;
                 locations[key].last_update = now;
             });
             
-            document.getElementById('lastUpdateTime').textContent = new Date().toLocaleString('id-ID');
+            const lastUpdateEl = document.getElementById('lastUpdateTime');
+            if (lastUpdateEl) lastUpdateEl.textContent = new Date().toLocaleTimeString('id-ID');
             
             const notification = document.createElement('div');
-            notification.className = 'fixed top-4 right-4 px-4 py-2 bg-green-500 text-white rounded-lg shadow-lg z-50';
+            notification.className = 'fixed top-4 right-4 px-4 py-2 bg-green-500 text-white rounded-lg shadow-lg z-[2000]';
             notification.textContent = 'Data berhasil diperbarui!';
             document.body.appendChild(notification);
             setTimeout(() => notification.remove(), 3000);
