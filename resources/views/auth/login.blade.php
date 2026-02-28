@@ -149,7 +149,7 @@
                 <!-- Submit Button -->
                 <button type="submit" 
                         class="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-4 rounded-2xl shadow-xl shadow-blue-500/20 transition-all hover:scale-[1.02] active:scale-95 flex items-center justify-center text-sm uppercase tracking-widest">
-                    <span>Otorisasi Sistem</span>
+                    <span>Login Now</span>
                     <i class="fas fa-chevron-right ml-3 text-xs opacity-50 group-hover:translate-x-1 transition-transform"></i>
                 </button>
             </div>
