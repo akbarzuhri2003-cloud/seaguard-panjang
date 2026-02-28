@@ -17,42 +17,48 @@ class DashboardController extends Controller
     
     public function index()
     {
-        $predictor = new KNNTidePredictor();
-        $today = Carbon::now('Asia/Jakarta');
+        $cacheKey = 'dashboard_predictions_30_days';
         
-        // Prediksi untuk 30 hari ke depan
-        $predictions = [];
-        $hasData = false;
-        
-        // Cek dulu apakah ada data histori sama sekali
-        if (\App\Models\HistoricalTide::exists()) {
-            for ($i = 0; $i < 30; $i++) {
-                $date = $today->copy()->addDays($i)->toDateString();
-                $prediction = $predictor->predictForDate($date);
-                if ($prediction) {
-                    $predictions[] = $prediction;
-                    $hasData = true;
+        $data = \Illuminate\Support\Facades\Cache::remember($cacheKey, now()->addHours(1), function () {
+            $predictor = new KNNTidePredictor();
+            $today = Carbon::now('Asia/Jakarta');
+            
+            // Prediksi untuk 30 hari ke depan
+            $predictions = [];
+            $hasData = false;
+            
+            // Cek dulu apakah ada data histori sama sekali
+            if (\App\Models\HistoricalTide::exists()) {
+                for ($i = 0; $i < 30; $i++) {
+                    $date = $today->copy()->addDays($i)->toDateString();
+                    $prediction = $predictor->predictForDate($date);
+                    if ($prediction) {
+                        $predictions[] = $prediction;
+                        $hasData = true;
+                    }
                 }
             }
-        }
+            
+            // Jika tidak ada data valid, kosongkan array
+            if (!$hasData) {
+                $predictions = [];
+            }
+            
+            // Data untuk chart
+            $chartData = [
+                'dates' => !empty($predictions) ? array_map(function($prediction) {
+                    return \Carbon\Carbon::parse($prediction['date'])->format('d M');
+                }, $predictions) : [],
+                'heights' => !empty($predictions) ? array_map(function($prediction) {
+                    return (float) $prediction['predicted_height'];
+                }, $predictions) : [],
+                'tide_types' => !empty($predictions) ? array_column($predictions, 'tide_type') : [],
+            ];
+
+            return compact('predictions', 'chartData');
+        });
         
-        // Jika tidak ada data valid, kosongkan array
-        if (!$hasData) {
-            $predictions = [];
-        }
-        
-        // Data untuk chart
-        $chartData = [
-            'dates' => !empty($predictions) ? array_map(function($prediction) {
-                return \Carbon\Carbon::parse($prediction['date'])->format('d M');
-            }, $predictions) : [],
-            'heights' => !empty($predictions) ? array_map(function($prediction) {
-                return (float) $prediction['predicted_height'];
-            }, $predictions) : [],
-            'tide_types' => !empty($predictions) ? array_column($predictions, 'tide_type') : [],
-        ];
-        
-        return view('dashboard.index', compact('predictions', 'chartData'));
+        return view('dashboard.index', $data);
     }
     
     public function weeklyPrediction()

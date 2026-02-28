@@ -90,64 +90,85 @@
 </head>
 <body class="bg-gray-50">
     <!-- Navigation -->
-    <div class="bg-gradient-to-r from-blue-900 to-cyan-800 text-white shadow-lg">
-        <div class="max-w-7xl mx-auto px-4 py-4">
-            <div class="flex justify-between items-center">
+    <nav class="bg-gradient-to-r from-blue-900 to-cyan-800 text-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
                 <!-- Logo -->
                 <div class="flex items-center space-x-3">
                     <div class="tide-animation">
                         <i class="fas fa-water text-2xl"></i>
                     </div>
                     <div>
-                        <h1 class="text-xl font-bold">SeaGuard Panjang</h1>
-                        <p class="text-xs text-blue-200">Prediksi Pasang Surut</p>
+                        <h1 class="text-lg md:text-xl font-bold leading-tight">SeaGuard</h1>
+                        <p class="text-[10px] md:text-xs text-blue-200 uppercase tracking-wider">Panjang Prediksi</p>
                     </div>
                 </div>
                 
-                <!-- Live Time WIB -->
-                <div class="hidden md:flex items-center space-x-4">
-                    <div class="bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg">
+                <!-- Live Time WIB (Hidden on Mobile) -->
+                <div class="hidden lg:flex items-center space-x-4">
+                    <div class="bg-white/10 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-white/10">
                         <div class="flex items-center">
                             <i class="fas fa-clock mr-2 text-blue-200"></i>
                             <div class="text-center">
-                                <div class="digital-clock text-lg" id="liveTime">
-                                    --:--:--
-                                </div>
-                                <div class="text-xs text-blue-200 mt-1">
-                                    Waktu Indonesia Barat (WIB)
-                                </div>
+                                <div class="digital-clock text-base font-bold" id="liveTime">--:--:--</div>
                             </div>
                         </div>
                     </div>
                     
-                    <div class="bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg">
+                    <div class="bg-white/10 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-white/10">
                         <div class="text-center">
-                            <div class="text-sm">Tanggal</div>
-                            <div class="font-semibold" id="liveDate">
-                                -- --- ----
-                            </div>
+                            <div class="text-[10px] text-blue-200 uppercase">Tanggal</div>
+                            <div class="text-sm font-semibold" id="liveDate">-- --- ----</div>
                         </div>
                     </div>
                 </div>
 
-                <!-- CSRF Token -->
-                <meta name="csrf-token" content="{{ csrf_token() }}">
-
-                <!-- Menu -->
-                <div class="flex space-x-2">
-                    <a href="/dashboard" class="px-4 py-2 rounded-lg hover:bg-white/10 transition flex items-center">
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center space-x-1">
+                    <a href="/dashboard" class="px-3 py-2 rounded-lg hover:bg-white/10 transition flex items-center text-sm {{ request()->is('dashboard') ? 'bg-white/20' : '' }}">
                         <i class="fas fa-tachometer-alt mr-2"></i>Dashboard
                     </a>
-                    <a href="/weekly-prediction" class="px-4 py-2 rounded-lg hover:bg-white/10 transition flex items-center">
+                    <a href="/weekly-prediction" class="px-3 py-2 rounded-lg hover:bg-white/10 transition flex items-center text-sm {{ request()->is('weekly-prediction') ? 'bg-white/20' : '' }}">
                         <i class="fas fa-chart-line mr-2"></i>Prediksi
                     </a>
-                    <a href="/maps" class="px-4 py-2 rounded-lg hover:bg-white/10 transition flex items-center">
+                    <a href="/maps" class="px-3 py-2 rounded-lg hover:bg-white/10 transition flex items-center text-sm {{ request()->is('maps') ? 'bg-white/20' : '' }}">
                         <i class="fas fa-map mr-2"></i>Peta
                     </a>
                 </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-button" class="text-white hover:text-blue-200 focus:outline-none p-2 rounded-lg hover:bg-white/10">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
             </div>
         </div>
-    </div>
+
+        <!-- Mobile Menu (Hidden by default) -->
+        <div id="mobile-menu" class="hidden md:hidden bg-blue-900/95 backdrop-blur-md border-t border-white/10">
+            <div class="px-4 pt-2 pb-6 space-y-2">
+                <a href="/dashboard" class="block px-4 py-3 rounded-lg hover:bg-white/10 transition flex items-center {{ request()->is('dashboard') ? 'bg-white/20' : '' }}">
+                    <i class="fas fa-tachometer-alt w-8"></i>Dashboard
+                </a>
+                <a href="/weekly-prediction" class="block px-4 py-3 rounded-lg hover:bg-white/10 transition flex items-center {{ request()->is('weekly-prediction') ? 'bg-white/20' : '' }}">
+                    <i class="fas fa-chart-line w-8"></i>Prediksi Mingguan
+                </a>
+                <a href="/maps" class="block px-4 py-3 rounded-lg hover:bg-white/10 transition flex items-center {{ request()->is('maps') ? 'bg-white/20' : '' }}">
+                    <i class="fas fa-map w-8"></i>Peta Interaktif
+                </a>
+                <div class="pt-4 mt-4 border-t border-white/10">
+                    <div class="flex items-center justify-between text-xs text-blue-200 px-4">
+                        <span id="mobile-live-date">-- --- ----</span>
+                        <span id="mobile-live-time" class="font-bold">--:--:--</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- CSRF Token -->
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <!-- Main Content -->
     <main class="max-w-7xl mx-auto px-4 py-8">
@@ -245,9 +266,9 @@
             const date = formatDate(wibTime);
             
             // Update time elements
-            const timeElements = document.querySelectorAll('.digital-clock, #liveTime, #dashboardTime, #serverTime, #currentTimeWIB');
+            const timeElements = document.querySelectorAll('.digital-clock, #liveTime, #dashboardTime, #serverTime, #currentTimeWIB, #mobile-live-time');
             timeElements.forEach(el => {
-                if (el.classList.contains('digital-clock') || el.id === 'currentTimeWIB') {
+                if (el.classList.contains('digital-clock') || el.id === 'currentTimeWIB' || el.id === 'mobile-live-time') {
                     el.innerHTML = time.time;
                 } else {
                     el.textContent = time.timePlain;
@@ -255,7 +276,11 @@
             });
             
             // Update date elements
-            document.getElementById('liveDate').textContent = date.short;
+            const liveDate = document.getElementById('liveDate');
+            if (liveDate) liveDate.textContent = date.short;
+
+            const mobileLiveDate = document.getElementById('mobile-live-date');
+            if (mobileLiveDate) mobileLiveDate.textContent = date.full;
             
             // Update progress bar
             const totalMinutes = wibTime.getHours() * 60 + wibTime.getMinutes();
@@ -271,6 +296,12 @@
                 currentHourElement.textContent = `${time.hour}:${time.minute}`;
             }
         }
+
+        // Mobile Menu Toggle
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        });
         
         // Initialize time update
         updateAllTimes();

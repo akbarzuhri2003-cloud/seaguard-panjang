@@ -56,6 +56,9 @@ class TideImportService
                 $count += count($chunk);
             }
             
+            // Clear dashboard cache after import
+            \Illuminate\Support\Facades\Cache::forget('dashboard_predictions_30_days');
+            
             return [
                 'success' => true,
                 'count' => $count,

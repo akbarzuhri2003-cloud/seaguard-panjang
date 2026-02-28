@@ -9,6 +9,7 @@ use Illuminate\Support\Carbon;
 class KNNTidePredictor
 {
     private $k = 3;
+    private $historicalDataCache = null;
     
     public function predictForDate($date, $features = null)
     {
@@ -24,16 +25,37 @@ class KNNTidePredictor
             }
             
             $distances = [];
+            $weights = [
+                'temperature' => 0.2,
+                'pressure'    => 0.3,
+                'wind_speed'  => 0.2,
+                'moon_phase'  => 0.15,
+                'day_of_year' => 0.1,
+                'hour'        => 0.05,
+            ];
             
-            foreach ($historicalData as $index => $data) {
-                $distance = $this->calculateEuclideanDistance($features, [
+            foreach ($historicalData as $data) {
+                // Pre-calculate data features to avoid excessive Carbon calls in loop
+                $dataCarbon = Carbon::parse($data->date);
+                $dataTime = Carbon::parse($data->time);
+                
+                $dataFeatures = [
                     'temperature' => $data->temperature,
                     'pressure' => $data->pressure,
                     'wind_speed' => $data->wind_speed,
-                    'moon_phase' => $this->getMoonPhase(Carbon::parse($data->date)),
-                    'day_of_year' => Carbon::parse($data->date)->dayOfYear,
-                    'hour' => Carbon::parse($data->time)->hour,
-                ]);
+                    'moon_phase' => $this->getMoonPhase($dataCarbon),
+                    'day_of_year' => $dataCarbon->dayOfYear,
+                    'hour' => $dataTime->hour,
+                ];
+
+                $sum = 0;
+                foreach ($weights as $key => $weight) {
+                    $val1 = $features[$key] ?? 0;
+                    $val2 = $dataFeatures[$key] ?? 0;
+                    $diff = $val1 - $val2;
+                    $sum += $weight * ($diff * $diff);
+                }
+                $distance = sqrt($sum);
                 
                 $distances[] = [
                     'distance' => $distance,
@@ -57,6 +79,11 @@ class KNNTidePredictor
     
     private function getHistoricalData($date)
     {
+        // Simple internal cache for the request duration
+        if ($this->historicalDataCache !== null) {
+            return $this->historicalDataCache;
+        }
+
         try {
             if (!\Schema::hasTable('historical_tides')) {
                 return collect();
@@ -71,42 +98,22 @@ class KNNTidePredictor
                       ->orWhereMonth('date', $carbonDate->copy()->addMonth()->month);
                 })
                 ->orderBy('date', 'desc')
-                ->take(200)
+                ->take(500) // Increased for better accuracy now that it's cached
                 ->get();
 
             // Strategi 2: Jika kurang dari 3 record, pakai semua data yang ada
             if ($data->count() < 3) {
                 $data = HistoricalTide::orderBy('date', 'desc')
-                    ->take(500)
+                    ->take(1000)
                     ->get();
             }
 
+            $this->historicalDataCache = $data;
             return $data;
 
         } catch (\Exception $e) {
             return collect();
         }
-    }
-
-    private function calculateEuclideanDistance($features1, $features2)
-    {
-        $sum = 0;
-        $weights = [
-            'temperature' => 0.2,
-            'pressure'    => 0.3,
-            'wind_speed'  => 0.2,
-            'moon_phase'  => 0.15,
-            'day_of_year' => 0.1,
-            'hour'        => 0.05,
-        ];
-
-        foreach ($features1 as $key => $value) {
-            if (isset($features2[$key]) && isset($weights[$key])) {
-                $diff = ($features2[$key] !== null) ? ($value - $features2[$key]) : 0;
-                $sum += $weights[$key] * pow($diff, 2);
-            }
-        }
-        return sqrt($sum);
     }
 
     private function getDefaultFeatures($date)

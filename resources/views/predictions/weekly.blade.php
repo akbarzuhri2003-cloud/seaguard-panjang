@@ -4,20 +4,20 @@
 
 @section('content')
 <div class="mb-8">
-    <div class="flex justify-between items-center">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-            <h1 class="text-3xl font-bold text-gray-800 dark:text-white">Prediksi Ketinggian Air Laut</h1>
-            <p class="text-gray-600 dark:text-gray-300 mt-2">
-                <i class="fas fa-chart-line mr-2"></i>
-                Prediksi 7 hari ke depan berdasarkan data historis dan algoritma KNN
+            <h1 class="text-2xl md:text-3xl font-bold text-gray-800 dark:text-white leading-tight">Prediksi Air Laut</h1>
+            <p class="text-xs md:text-sm text-gray-600 dark:text-gray-300 mt-1">
+                <i class="fas fa-chart-line mr-2 text-blue-500"></i>
+                Prediksi 7 hari ke depan (Algoritma KNN)
             </p>
         </div>
-        <div class="flex items-center space-x-3">
-            <div class="px-4 py-2 bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 rounded-lg">
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center space-y-2 sm:space-y-0 sm:space-x-3 w-full md:w-auto">
+            <div class="px-4 py-2 bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 rounded-xl text-sm font-medium flex items-center justify-center">
                 <i class="fas fa-database mr-2"></i>
-                Data: <span id="dataPoints">0</span> records
+                <span id="dataPoints">0</span> <span class="ml-1">records</span>
             </div>
-            <button onclick="refreshPredictions()" id="refreshButton" class="px-4 py-2 bg-seaguard-500 hover:bg-seaguard-600 text-white rounded-lg transition flex items-center">
+            <button onclick="refreshPredictions()" id="refreshButton" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-md transition flex items-center justify-center font-bold">
                 <i class="fas fa-redo-alt mr-2"></i>
                 <span id="refreshText">Refresh</span>
             </button>
@@ -37,94 +37,97 @@
 <!-- Content (akan diisi oleh JavaScript) -->
 <div id="content" class="hidden">
     <!-- Status Indikator -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         <!-- Status Saat Ini -->
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border-l-4" id="currentStatus">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 md:p-6 border-l-4 col-span-2 md:col-span-1" id="currentStatus">
             <!-- Diisi oleh JS -->
         </div>
 
         <!-- Tinggi Air Saat Ini -->
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-            <div class="flex items-center justify-between">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 md:p-6">
+            <div class="flex flex-col h-full justify-between">
                 <div>
-                    <p class="text-gray-500 dark:text-gray-300 text-sm">Tinggi Air Saat Ini</p>
-                    <h3 class="text-2xl font-bold text-gray-800 dark:text-white mt-2" id="currentWaterLevel">-- m</h3>
-                    <p class="text-sm text-gray-600 dark:text-gray-300">Panjang, Bandar Lampung</p>
+                    <p class="text-gray-500 dark:text-gray-300 text-[10px] md:text-sm font-bold uppercase">Tinggi Air</p>
+                    <h3 class="text-xl md:text-2xl font-black text-gray-800 dark:text-white mt-1" id="currentWaterLevel">-- m</h3>
                 </div>
-                <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center">
-                    <i class="fas fa-water text-blue-500 dark:text-blue-300 text-xl"></i>
+                <div class="flex items-center mt-2">
+                    <div class="w-8 h-8 bg-blue-100 dark:bg-blue-900/40 rounded-lg flex items-center justify-center mr-2">
+                        <i class="fas fa-water text-blue-500 text-sm"></i>
+                    </div>
+                    <span class="text-[10px] text-gray-400">Live</span>
                 </div>
             </div>
         </div>
 
-        <!-- Prediksi Pasang Tertinggi -->
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-            <div class="flex items-center justify-between">
+        <!-- Pasang Tertinggi -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 md:p-6">
+            <div class="flex flex-col h-full justify-between">
                 <div>
-                    <p class="text-gray-500 dark:text-gray-300 text-sm">Prediksi Pasang Tertinggi</p>
-                    <h3 class="text-2xl font-bold text-gray-800 dark:text-white mt-2" id="highestPrediction">-- m</h3>
-                    <p class="text-sm text-gray-600 dark:text-gray-300" id="highestPredictionTime">--:--</p>
+                    <p class="text-gray-500 dark:text-gray-300 text-[10px] md:text-sm font-bold uppercase">Pasang Max</p>
+                    <h3 class="text-xl md:text-2xl font-black text-gray-800 dark:text-white mt-1" id="highestPrediction">-- m</h3>
                 </div>
-                <div class="w-12 h-12 bg-red-100 dark:bg-red-900 rounded-full flex items-center justify-center">
-                    <i class="fas fa-exclamation-triangle text-red-500 dark:text-red-300 text-xl"></i>
+                <div class="flex items-center mt-2">
+                    <div class="w-8 h-8 bg-red-100 dark:bg-red-900/40 rounded-lg flex items-center justify-center mr-2">
+                        <i class="fas fa-arrow-up text-red-500 text-sm"></i>
+                    </div>
+                    <span class="text-[10px] text-gray-400" id="highestPredictionTime">--:--</span>
                 </div>
             </div>
         </div>
 
-        <!-- Akurasi Prediksi -->
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-            <div class="flex items-center justify-between">
+        <!-- Akurasi -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 md:p-6">
+            <div class="flex flex-col h-full justify-between">
                 <div>
-                    <p class="text-gray-500 dark:text-gray-300 text-sm">Akurasi Prediksi</p>
-                    <h3 class="text-2xl font-bold text-gray-800 dark:text-white mt-2" id="accuracy">--%</h3>
-                    <p class="text-sm text-green-600 dark:text-green-400">
-                        <i class="fas fa-brain mr-1"></i>Algoritma KNN
-                    </p>
+                    <p class="text-gray-500 dark:text-gray-300 text-[10px] md:text-sm font-bold uppercase">Akurasi</p>
+                    <h3 class="text-xl md:text-2xl font-black text-gray-800 dark:text-white mt-1" id="accuracy">--%</h3>
                 </div>
-                <div class="w-12 h-12 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center">
-                    <i class="fas fa-brain text-green-500 dark:text-green-300 text-xl"></i>
+                <div class="flex items-center mt-2">
+                    <div class="w-8 h-8 bg-green-100 dark:bg-green-900/40 rounded-lg flex items-center justify-center mr-2">
+                        <i class="fas fa-brain text-green-500 text-sm"></i>
+                    </div>
+                    <span class="text-[10px] text-gray-400">KNN ML</span>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Grafik Prediksi Mingguan -->
-    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-8">
-        <div class="flex justify-between items-center mb-6">
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 md:p-6 mb-8">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-2">
             <div>
-                <h3 class="text-lg font-semibold text-gray-800 dark:text-white">Grafik Prediksi 7 Hari</h3>
-                <p class="text-sm text-gray-600 dark:text-gray-300" id="chartSubtitle">Data prediksi ketinggian air laut harian</p>
+                <h3 class="text-lg font-bold text-gray-800 dark:text-white">Grafik Prediksi 7 Hari</h3>
+                <p class="text-[10px] md:text-sm text-gray-500" id="chartSubtitle">Trend ketinggian air laut</p>
             </div>
             <div class="flex items-center space-x-2">
-                <span class="text-sm text-gray-600 dark:text-gray-300">Update:</span>
-                <span class="text-sm font-semibold text-seaguard-600" id="lastUpdated">--:--</span>
+                <span class="text-[10px] text-gray-400 uppercase font-bold">Update:</span>
+                <span class="text-[10px] font-black text-blue-600 dark:text-blue-400" id="lastUpdated">--:--</span>
             </div>
         </div>
         
-        <div class="h-96">
+        <div class="h-64 md:h-96">
             <canvas id="weeklyChart"></canvas>
         </div>
     </div>
 
     <!-- Tabel Prediksi Detail -->
-    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-8">
-        <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-6">
-            <i class="fas fa-table mr-2"></i>Detail Prediksi Harian
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 md:p-6 mb-8 overflow-hidden">
+        <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-6 flex items-center">
+            <i class="fas fa-table mr-3 text-blue-500"></i>Detail Prediksi Harian
         </h3>
         
-        <div class="overflow-x-auto">
-            <table class="w-full">
+        <div class="overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0">
+            <table class="w-full text-xs md:text-sm">
                 <thead>
-                    <tr class="border-b dark:border-gray-700">
-                        <th class="text-left py-3 px-4 text-gray-600 dark:text-gray-300">Hari/Tanggal</th>
-                        <th class="text-left py-3 px-4 text-gray-600 dark:text-gray-300">Prediksi (m)</th>
-                        <th class="text-left py-3 px-4 text-gray-600 dark:text-gray-300">Status</th>
-                        <th class="text-left py-3 px-4 text-gray-600 dark:text-gray-300">Pasang Tertinggi</th>
-                        <th class="text-left py-3 px-4 text-gray-600 dark:text-gray-300">Surut Terendah</th>
-                        <th class="text-left py-3 px-4 text-gray-600 dark:text-gray-300">Rekomendasi</th>
+                    <tr class="border-b dark:border-gray-700 text-gray-400 uppercase tracking-tighter">
+                        <th class="text-left py-4 px-2 font-black">Hari/Tanggal</th>
+                        <th class="text-left py-4 px-2 font-black">Prediksi (m)</th>
+                        <th class="text-left py-4 px-2 font-black">Status</th>
+                        <th class="text-left py-4 px-2 font-black">Pasang/Surut</th>
+                        <th class="text-left py-4 px-2 font-black">Rekomendasi</th>
                     </tr>
                 </thead>
-                <tbody id="predictionTable">
+                <tbody id="predictionTable" class="divide-y divide-gray-100 dark:divide-gray-700">
                     <!-- Diisi oleh JavaScript -->
                 </tbody>
             </table>
@@ -132,45 +135,45 @@
     </div>
 
     <!-- Info Algoritma -->
-    <div class="bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-6 mb-8">
-        <h4 class="text-lg font-semibold text-blue-800 dark:text-blue-300 mb-4">
-            <i class="fas fa-cogs mr-2"></i>Informasi Algoritma KNN
+    <div class="bg-gradient-to-br from-gray-50 to-blue-50 dark:from-gray-900/40 dark:to-blue-900/40 border border-gray-100 dark:border-gray-800 rounded-2xl p-6 mb-8">
+        <h4 class="text-sm md:text-lg font-black text-gray-800 dark:text-blue-300 mb-6 flex items-center uppercase tracking-widest">
+            <i class="fas fa-microchip mr-3 text-blue-500"></i>Engine: KNN Analysis
         </h4>
         
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="bg-white dark:bg-gray-800 rounded-lg p-4">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            <div class="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-xl p-4 border border-white/40 dark:border-gray-700/40">
                 <div class="flex items-center mb-3">
-                    <div class="w-10 h-10 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mr-3">
-                        <i class="fas fa-search text-purple-500 dark:text-purple-300"></i>
+                    <div class="w-8 h-8 bg-purple-100 dark:bg-purple-900/40 rounded-lg flex items-center justify-center mr-3">
+                        <i class="fas fa-search text-purple-500 text-sm"></i>
                     </div>
-                    <h5 class="font-semibold text-gray-800 dark:text-white">Nearest Neighbor</h5>
+                    <h5 class="text-xs font-black text-gray-800 dark:text-white uppercase">Nearest Neighbor</h5>
                 </div>
-                <p class="text-sm text-gray-600 dark:text-gray-300">
-                    Mencari pola tanggal yang sama dalam data historis untuk prediksi.
+                <p class="text-[10px] text-gray-500 dark:text-gray-400 leading-relaxed">
+                    Mencari pola tanggal yang sama dalam data historis untuk akurasi prediksi.
                 </p>
             </div>
             
-            <div class="bg-white dark:bg-gray-800 rounded-lg p-4">
+            <div class="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-xl p-4 border border-white/40 dark:border-gray-700/40">
                 <div class="flex items-center mb-3">
-                    <div class="w-10 h-10 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mr-3">
-                        <i class="fas fa-chart-bar text-green-500 dark:text-green-300"></i>
+                    <div class="w-8 h-8 bg-green-100 dark:bg-green-900/40 rounded-lg flex items-center justify-center mr-3">
+                        <i class="fas fa-chart-bar text-green-500 text-sm"></i>
                     </div>
-                    <h5 class="font-semibold text-gray-800 dark:text-white">Data Training</h5>
+                    <h5 class="text-xs font-black text-gray-800 dark:text-white uppercase">Training Data</h5>
                 </div>
-                <p class="text-sm text-gray-600 dark:text-gray-300">
-                    Menggunakan <span id="trainingDataCount">0</span> data historis dari database.
+                <p class="text-[10px] text-gray-500 dark:text-gray-400 leading-relaxed">
+                    Menggunakan <span id="trainingDataCount" class="font-black">0</span> data historis yang tersimpan aman di database.
                 </p>
             </div>
             
-            <div class="bg-white dark:bg-gray-800 rounded-lg p-4">
+            <div class="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-xl p-4 border border-white/40 dark:border-gray-700/40">
                 <div class="flex items-center mb-3">
-                    <div class="w-10 h-10 bg-orange-100 dark:bg-orange-900 rounded-full flex items-center justify-center mr-3">
-                        <i class="fas fa-balance-scale text-orange-500 dark:text-orange-300"></i>
+                    <div class="w-8 h-8 bg-orange-100 dark:bg-orange-900/40 rounded-lg flex items-center justify-center mr-3">
+                        <i class="fas fa-balance-scale text-orange-500 text-sm"></i>
                     </div>
-                    <h5 class="font-semibold text-gray-800 dark:text-white">Similarity Weight</h5>
+                    <h5 class="text-xs font-black text-gray-800 dark:text-white uppercase">Similarity Weight</h5>
                 </div>
-                <p class="text-sm text-gray-600 dark:text-gray-300">
-                    Memberi bobot lebih pada data dengan pola yang paling mirip.
+                <p class="text-[10px] text-gray-500 dark:text-gray-400 leading-relaxed">
+                    Memberi bobat dinamis pada data dengan pola yang paling relevan.
                 </p>
             </div>
         </div>
@@ -335,40 +338,40 @@
             row.className = 'border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50';
             
             row.innerHTML = `
-                <td class="py-4 px-4">
-                    <div class="font-medium text-gray-800 dark:text-white">${pred.day_name}</div>
-                    <div class="text-sm text-gray-500 dark:text-gray-400">${pred.formatted_date}</div>
+                <td class="py-4 px-2">
+                    <div class="font-black text-gray-800 dark:text-white uppercase tracking-tighter">${pred.day_name}</div>
+                    <div class="text-[10px] text-gray-500 dark:text-gray-400 font-medium">${pred.short_date}</div>
                 </td>
-                <td class="py-4 px-4">
-                    <div class="font-bold text-lg text-gray-800 dark:text-white">${pred.avg_height} m</div>
-                    <div class="text-xs text-gray-500 dark:text-gray-400">
-                        Min: ${pred.min_height}m | Max: ${pred.max_height}m
+                <td class="py-4 px-2">
+                    <div class="font-black text-base text-gray-800 dark:text-white">${pred.avg_height} m</div>
+                    <div class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">
+                        Rerata
                     </div>
                 </td>
-                <td class="py-4 px-4">
-                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
-                        ${pred.status === 'aman' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' : ''}
-                        ${pred.status === 'waspada' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300' : ''}
-                        ${pred.status === 'siaga' ? 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300' : ''}
-                        ${pred.status === 'bahaya' ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300' : ''}">
-                        <i class="fas ${config.icon} mr-2"></i>
+                <td class="py-4 px-2">
+                    <span class="inline-flex items-center px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest
+                        ${pred.status === 'aman' ? 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300' : ''}
+                        ${pred.status === 'waspada' ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-300' : ''}
+                        ${pred.status === 'siaga' ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-300' : ''}
+                        ${pred.status === 'bahaya' ? 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300' : ''}">
+                        <i class="fas ${config.icon} mr-1.5"></i>
                         ${config.text}
                     </span>
                 </td>
-                <td class="py-4 px-4">
-                    <div class="font-medium text-gray-800 dark:text-white">${pred.high_tide_time}</div>
-                    <div class="text-sm text-gray-500 dark:text-gray-400">${pred.high_tide_height} m</div>
-                </td>
-                <td class="py-4 px-4">
-                    <div class="font-medium text-gray-800 dark:text-white">${pred.low_tide_time}</div>
-                    <div class="text-sm text-gray-500 dark:text-gray-400">${pred.low_tide_height} m</div>
-                </td>
-                <td class="py-4 px-4">
-                    <div class="text-sm text-gray-600 dark:text-gray-300">${pred.recommendation}</div>
-                    <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                        <i class="fas fa-chart-line mr-1"></i>
-                        ${pred.similar_data_points} data similar
+                <td class="py-4 px-2">
+                    <div class="flex flex-col gap-1">
+                        <div class="flex items-center text-blue-600 dark:text-blue-400 font-black">
+                             <i class="fas fa-arrow-up text-[8px] mr-1.5"></i> ${pred.high_tide_height}m
+                             <span class="text-[9px] ml-2 text-gray-400 font-medium">${pred.high_tide_time}</span>
+                        </div>
+                        <div class="flex items-center text-green-600 dark:text-green-400 font-black">
+                             <i class="fas fa-arrow-down text-[8px] mr-1.5"></i> ${pred.low_tide_height}m
+                             <span class="text-[9px] ml-2 text-gray-400 font-medium">${pred.low_tide_time}</span>
+                        </div>
                     </div>
+                </td>
+                <td class="py-4 px-2 min-w-[150px]">
+                    <div class="text-[10px] text-gray-600 dark:text-gray-300 leading-normal italic line-clamp-2">${pred.recommendation}</div>
                 </td>
             `;
             

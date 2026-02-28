@@ -3,18 +3,18 @@
 @section('title', 'Dashboard')
 
 @section('content')
-<div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
-    <div>
-        <h1 class="text-3xl font-bold text-gray-800 dark:text-white">Dashboard Prediksi Pasang Surut</h1>
-        <p class="text-gray-600 dark:text-gray-300 mt-2">
-            <i class="fas fa-clock mr-2"></i>
-            Waktu Live: <span class="font-semibold" id="dashboardTime">--:--:--</span> WIB
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+    <div class="w-full">
+        <h1 class="text-2xl md:text-3xl font-bold text-gray-800 dark:text-white leading-tight">Dashboard Prediksi</h1>
+        <p class="text-xs md:text-sm text-gray-600 dark:text-gray-300 mt-1 flex items-center">
+            <i class="fas fa-map-marker-alt mr-2 text-blue-500"></i>
+            Pelabuhan Panjang, Bandar Lampung
         </p>
     </div>
     
-    <div class="mt-4 md:mt-0">
+    <div class="w-full md:w-auto">
         <button onclick="document.getElementById('importModal').classList.remove('hidden')" 
-                class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow-lg flex items-center transition duration-200">
+                class="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-5 rounded-xl shadow-lg flex items-center justify-center transition duration-200">
             <i class="fas fa-file-upload mr-2"></i>
             Import Data Excel
         </button>
@@ -119,96 +119,101 @@
         </button>
     </div>
 @else
-<!-- Stats dengan Time Card -->
-<div class="grid grid-cols-2 md:grid-cols-6 gap-4 mb-8">
+<!-- Stats Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4 mb-8">
     <!-- Time Card -->
-    <div class="time-card rounded-xl shadow-lg p-5 col-span-2 md:col-span-2">
-        <div class="flex items-center justify-between">
-            <div>
-                <div class="flex items-center text-blue-100">
-                    <i class="fas fa-clock text-xl mr-2"></i>
-                    <div>
-                        <p class="text-xs font-medium">WAKTU SEKARANG</p>
-                        <div class="digital-clock text-2xl mt-1" id="currentTimeWIB">--:--:--</div>
-                    </div>
+    <div class="time-card rounded-xl shadow-lg p-5 sm:col-span-2 lg:col-span-2 relative overflow-hidden">
+        <div class="absolute top-0 right-0 p-4 opacity-10">
+            <i class="fas fa-clock text-6xl"></i>
+        </div>
+        <div class="relative z-10 flex flex-col justify-between h-full">
+            <div class="flex items-center justify-between mb-4">
+                <div>
+                    <p class="text-[10px] md:text-xs font-bold uppercase tracking-widest text-blue-200">Waktu Live (WIB)</p>
+                    <div class="digital-clock text-3xl font-black mt-1" id="currentTimeWIB">--:--:--</div>
                 </div>
-                <p class="text-blue-200 text-xs mt-2" id="currentDateWIB">-- --- ----</p>
-            </div>
-            <div class="text-right">
-                <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+                <div class="w-12 h-12 bg-white/20 rounded-xl backdrop-blur-sm flex items-center justify-center border border-white/20">
                     <i class="fas fa-water text-2xl text-white"></i>
                 </div>
-                <p class="text-xs text-blue-200 mt-1 animate-pulse">LIVE</p>
             </div>
-        </div>
-        <div class="mt-3">
-            <div class="flex justify-between text-xs text-blue-200 mb-1">
-                <span>00:00</span>
-                <span id="currentHour">--:--</span>
-                <span>23:59</span>
-            </div>
-            <div class="h-1.5 bg-white/20 rounded-full overflow-hidden">
-                <div class="h-full bg-white/40 rounded-full" id="timeProgress"></div>
+            
+            <div>
+                <div class="flex justify-between text-[10px] text-blue-200 mb-1">
+                    <span>00:00</span>
+                    <span id="currentHour" class="font-bold underline">--:--</span>
+                    <span>23:59</span>
+                </div>
+                <div class="h-2 bg-black/20 rounded-full overflow-hidden border border-white/10">
+                    <div class="h-full bg-white/60 rounded-full shadow-[0_0_8px_rgba(255,255,255,0.5)] transition-all duration-1000" id="timeProgress"></div>
+                </div>
+                <p class="text-blue-100/80 text-[10px] sm:text-xs mt-3 italic" id="currentDateWIB">-- --- ----</p>
             </div>
         </div>
     </div>
 
-    <!-- Stat Card 1: Tinggi Air (KNN) -->
-    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 border-l-4 border-blue-500">
-        <div class="flex items-center justify-between">
-            <div>
-                <p class="text-gray-500 dark:text-gray-300 text-xs">Tinggi Air (KNN)</p>
-                <h3 class="text-xl font-bold text-gray-800 dark:text-white" id="liveHeight">-- m</h3>
-                <p class="text-xs text-green-600 dark:text-green-400" id="liveStatus">
-                    <i class="fas fa-minus mr-1"></i>--
-                </p>
-            </div>
-            <div class="w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center">
-                <i class="fas fa-water text-blue-500 dark:text-blue-300"></i>
-            </div>
-        </div>
-    </div>
-
-    <!-- Stat Card 2: Suhu (Open-Meteo) -->
-    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 border-l-4 border-green-500">
-        <div class="flex items-center justify-between">
-            <div>
-                <p class="text-gray-500 dark:text-gray-300 text-xs">Suhu Udara</p>
-                <h3 class="text-xl font-bold text-gray-800 dark:text-white" id="liveTemp">--°C</h3>
-                <p class="text-xs text-gray-500 dark:text-gray-400" id="liveHumidity">Kelembaban: --%</p>
-            </div>
-            <div class="w-10 h-10 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center">
-                <i class="fas fa-thermometer-half text-green-500 dark:text-green-300"></i>
+    <!-- Stat Cards -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:col-span-2 lg:col-span-4">
+        <!-- Stat Card 1: Tinggi Air (KNN) -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 border-b-4 border-blue-500 hover:shadow-lg transition-all">
+            <div class="flex flex-col h-full justify-between">
+                <div class="flex items-center justify-between mb-2">
+                    <p class="text-gray-500 dark:text-gray-300 text-[10px] font-bold uppercase tracking-tight">Tinggi Air</p>
+                    <div class="w-8 h-8 bg-blue-50 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-water text-blue-500 text-sm"></i>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-xl md:text-2xl font-black text-gray-800 dark:text-white truncate" id="liveHeight">-- m</h3>
+                    <p class="text-[10px] mt-1" id="liveStatus">--</p>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- Stat Card 3: Kecepatan Angin (Open-Meteo) -->
-    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 border-l-4 border-purple-500">
-        <div class="flex items-center justify-between">
-            <div>
-                <p class="text-gray-500 dark:text-gray-300 text-xs">Kecepatan Angin</p>
-                <h3 class="text-xl font-bold text-gray-800 dark:text-white" id="liveWind">-- m/s</h3>
-                <p class="text-xs text-gray-600 dark:text-gray-300" id="liveWindDir">Arah: --</p>
-            </div>
-            <div class="w-10 h-10 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center">
-                <i class="fas fa-wind text-purple-500 dark:text-purple-300"></i>
+        <!-- Stat Card 2: Suhu -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 border-b-4 border-green-500 hover:shadow-lg transition-all">
+            <div class="flex flex-col h-full justify-between">
+                <div class="flex items-center justify-between mb-2">
+                    <p class="text-gray-500 dark:text-gray-300 text-[10px] font-bold uppercase tracking-tight">Suhu Udara</p>
+                    <div class="w-8 h-8 bg-green-50 dark:bg-green-900/30 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-thermometer-half text-green-500 text-sm"></i>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-xl md:text-2xl font-black text-gray-800 dark:text-white truncate" id="liveTemp">--°C</h3>
+                    <p class="text-[10px] text-gray-500" id="liveHumidity">H: --%</p>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- Stat Card 4: Tekanan Udara (Open-Meteo) -->
-    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 border-l-4 border-orange-500">
-        <div class="flex items-center justify-between">
-            <div>
-                <p class="text-gray-500 dark:text-gray-300 text-xs">Tekanan Udara</p>
-                <h3 class="text-xl font-bold text-gray-800 dark:text-white" id="livePressure">-- hPa</h3>
-                <p class="text-xs text-gray-500 dark:text-gray-400" id="weatherSource">
-                    <i class="fas fa-satellite-dish mr-1"></i>Open-Meteo
-                </p>
+        <!-- Stat Card 3: Angin -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 border-b-4 border-purple-500 hover:shadow-lg transition-all">
+            <div class="flex flex-col h-full justify-between">
+                <div class="flex items-center justify-between mb-2">
+                    <p class="text-gray-500 dark:text-gray-300 text-[10px] font-bold uppercase tracking-tight">Angin</p>
+                    <div class="w-8 h-8 bg-purple-50 dark:bg-purple-900/30 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-wind text-purple-500 text-sm"></i>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-xl md:text-2xl font-black text-gray-800 dark:text-white truncate" id="liveWind">-- m/s</h3>
+                    <p class="text-[10px] text-gray-500 truncate" id="liveWindDir">--</p>
+                </div>
             </div>
-            <div class="w-10 h-10 bg-orange-100 dark:bg-orange-900 rounded-full flex items-center justify-center">
-                <i class="fas fa-tachometer-alt text-orange-500 dark:text-orange-300"></i>
+        </div>
+
+        <!-- Stat Card 4: Tekanan -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 border-b-4 border-orange-500 hover:shadow-lg transition-all">
+            <div class="flex flex-col h-full justify-between">
+                <div class="flex items-center justify-between mb-2">
+                    <p class="text-gray-500 dark:text-gray-300 text-[10px] font-bold uppercase tracking-tight">Tekanan</p>
+                    <div class="w-8 h-8 bg-orange-50 dark:bg-orange-900/30 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-tachometer-alt text-orange-500 text-sm"></i>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-xl md:text-2xl font-black text-gray-800 dark:text-white truncate" id="livePressure">-- hPa</h3>
+                    <p class="text-[10px] text-gray-500 truncate" id="weatherSource">Live</p>
+                </div>
             </div>
         </div>
     </div>
@@ -216,51 +221,55 @@
 @endif
 
 <!-- Grafik Prediksi -->
-<div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-8">
-    <div class="flex justify-between items-center mb-6">
+<div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 md:p-6 mb-8">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
         <div>
-            <h3 class="text-lg font-semibold text-gray-800 dark:text-white">Grafik Prediksi 30 Hari</h3>
-            <p class="text-sm text-gray-600 dark:text-gray-300">Update terakhir: <span id="lastUpdate">--:--:--</span></p>
+            <h3 class="text-lg font-bold text-gray-800 dark:text-white">Grafik Prediksi 30 Hari</h3>
+            <p class="text-[10px] md:text-sm text-gray-500">Update terakhir: <span id="lastUpdate">--:--:--</span></p>
         </div>
-        <div class="flex space-x-2">
-            <button class="px-4 py-2 bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 rounded-lg text-sm font-medium">
-                <i class="fas fa-brain mr-2"></i>KNN Prediction
-            </button>
-            <button class="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-lg text-sm font-medium">
-                <i class="fas fa-database mr-2"></i>BMKG Data
-            </button>
+        <div class="flex flex-wrap gap-2">
+            <span class="px-3 py-1 bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-300 rounded-full text-[10px] font-bold uppercase tracking-wider">
+                <i class="fas fa-brain mr-1"></i>KNN Prediction
+            </span>
+            <span class="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-full text-[10px] font-bold uppercase tracking-wider">
+                <i class="fas fa-database mr-1 text-xs"></i>Verified
+            </span>
         </div>
     </div>
     
-    <div class="h-96">
+    <div class="h-64 md:h-96 w-full">
         <canvas id="tideChart"></canvas>
     </div>
 </div>
 
 @if(!empty($predictions))
 {{-- Jadwal Pasang Surut Hari Ini dari data KNN --}}
-@php
-    $todayStr = \Carbon\Carbon::now('Asia/Jakarta')->toDateString();
-    $todayPrediction = collect($predictions)->firstWhere('date', $todayStr);
-    $todayHeight = $todayPrediction ? number_format($todayPrediction['predicted_height'], 2) : null;
-    $todayType = $todayPrediction ? $todayPrediction['tide_type'] : null;
-@endphp
-<div class="bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-6 mb-8">
-    <h4 class="text-lg font-semibold text-blue-800 dark:text-blue-300 mb-4">
-        <i class="fas fa-water mr-2"></i>Prediksi Pasang Surut Hari Ini
-        <span class="text-sm font-normal text-blue-600 dark:text-blue-400 ml-2">(KNN)</span>
+<div class="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/10 dark:to-indigo-900/10 border border-blue-100 dark:border-blue-800/50 rounded-2xl p-4 md:p-6 mb-8 overflow-hidden relative">
+    <div class="absolute top-0 right-0 p-8 opacity-5">
+        <i class="fas fa-calendar-alt text-8xl"></i>
+    </div>
+    <h4 class="text-sm md:text-lg font-black text-blue-900 dark:text-blue-300 mb-5 flex items-center">
+        <i class="fas fa-water mr-3 text-blue-500"></i>
+        PREDIKSI PASANG SURUT TERKINI (KNN)
     </h4>
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 relative z-10">
         @foreach(collect($predictions)->take(4) as $pred)
         @php
             $isHigh = in_array($pred['tide_type'], ['HIGH_TIDE', 'PASANG']);
-            $colorClass = $isHigh ? 'text-blue-600 dark:text-blue-400' : 'text-green-600 dark:text-green-400';
+            $bgColor = $isHigh ? 'bg-blue-600' : 'bg-green-600';
+            $textColor = $isHigh ? 'text-blue-600' : 'text-green-600';
             $label = $isHigh ? 'Pasang' : 'Surut';
+            $icon = $isHigh ? 'fa-arrow-up' : 'fa-arrow-down';
         @endphp
-        <div class="text-center p-4 bg-white dark:bg-gray-800 rounded-lg shadow-sm">
-            <div class="text-sm text-gray-500 dark:text-gray-400">{{ \Carbon\Carbon::parse($pred['date'])->format('d M') }}</div>
-            <div class="text-xl font-bold text-gray-800 dark:text-white mt-2">{{ number_format($pred['predicted_height'], 2) }} m</div>
-            <div class="text-xs {{ $colorClass }} mt-1 font-medium">{{ $label }}</div>
+        <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-black/5 hover:border-blue-300 transition-colors">
+            <div class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{{ \Carbon\Carbon::parse($pred['date'])->format('d M') }}</div>
+            <div class="flex items-end justify-between mt-3">
+                <div class="text-xl font-black text-gray-800 dark:text-white">{{ number_format($pred['predicted_height'], 2) }}<span class="text-xs font-normal ml-1 text-gray-400">m</span></div>
+                <div class="w-6 h-6 rounded-lg {{ $bgColor }} bg-opacity-10 flex items-center justify-center">
+                    <i class="fas {{ $icon }} {{ $textColor }} text-[10px]"></i>
+                </div>
+            </div>
+            <div class="text-[10px] font-bold {{ $textColor }} uppercase tracking-tighter mt-1">{{ $label }}</div>
         </div>
         @endforeach
     </div>
