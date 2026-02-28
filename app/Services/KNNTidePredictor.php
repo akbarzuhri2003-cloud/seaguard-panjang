@@ -16,6 +16,14 @@ class KNNTidePredictor
         try {
             if (!$features) {
                 $features = $this->getDefaultFeatures($date);
+            } else {
+                // Ensure all weighted features are present
+                $defaultFeatures = $this->getDefaultFeatures($date);
+                foreach (['temperature', 'pressure', 'wind_speed', 'moon_phase', 'day_of_year', 'hour'] as $key) {
+                    if (!isset($features[$key]) || $features[$key] === null) {
+                        $features[$key] = $defaultFeatures[$key];
+                    }
+                }
             }
             
             $historicalData = $this->getHistoricalData($date);
@@ -26,12 +34,12 @@ class KNNTidePredictor
             
             $distances = [];
             $weights = [
-                'temperature' => 0.2,
-                'pressure'    => 0.3,
-                'wind_speed'  => 0.2,
-                'moon_phase'  => 0.15,
-                'day_of_year' => 0.1,
-                'hour'        => 0.05,
+                'temperature' => 0.05, // Reduced weight for secondary features
+                'pressure'    => 0.05,
+                'wind_speed'  => 0.05,
+                'moon_phase'  => 0.3,  // Increased weight for lunar influence
+                'day_of_year' => 0.35, // Primary seasonal influence
+                'hour'        => 0.2,  // Hourly diurnal influence
             ];
             
             foreach ($historicalData as $data) {
@@ -69,7 +77,7 @@ class KNNTidePredictor
             
             $nearestNeighbors = array_slice($distances, 0, $this->k);
             
-            return $this->calculatePrediction($nearestNeighbors, $date);
+            return $this->calculatePrediction($nearestNeighbors, $date, $features['hour'] ?? 0);
             
         } catch (\Exception $e) {
             return null;
@@ -136,7 +144,7 @@ class KNNTidePredictor
         return fmod($daysSinceReference, $daysInLunarCycle) / $daysInLunarCycle;
     }
 
-    private function calculatePrediction($neighbors, $date)
+    private function calculatePrediction($neighbors, $date, $hour = 0)
     {
         if (empty($neighbors)) {
             return null;
@@ -163,10 +171,11 @@ class KNNTidePredictor
 
         return [
             'date'                 => $date,
+            'hour'                 => $hour,
             'predicted_height'     => round($avgHeight, 2),
             'predicted_temperature'=> $totalWeight > 0 ? round($totalTemperature / $totalWeight, 1) : 28.5,
             'predicted_wind_speed' => $totalWeight > 0 ? round($totalWindSpeed / $totalWeight, 1) : 3.2,
-            'tide_type'            => $this->predictTideType($avgHeight, $carbonDate->hour),
+            'tide_type'            => $this->predictTideType($avgHeight, $hour),
             'confidence'           => min(0.95, $totalWeight / (count($neighbors) * 10)),
         ];
     }
@@ -181,11 +190,12 @@ class KNNTidePredictor
 
     private function predictTideType($height, $hour)
     {
-        $hourInDay = $hour % 24;
-        if (($hourInDay >= 5 && $hourInDay <= 8) || ($hourInDay >= 17 && $hourInDay <= 20)) {
-            return $height > 1.5 ? 'HIGH_TIDE' : 'MEDIUM_TIDE';
-        } elseif (($hourInDay >= 11 && $hourInDay <= 14) || ($hourInDay >= 23 || $hourInDay <= 2)) {
-            return $height < 0.5 ? 'LOW_TIDE' : 'MEDIUM_TIDE';
+        $hourInDay = (int) $hour;
+        // Peak logic for Panjang/Bandar Lampung (typically high at 6-9 and 18-21)
+        if (($hourInDay >= 5 && $hourInDay <= 10) || ($hourInDay >= 17 && $hourInDay <= 22)) {
+            return $height > 1.4 ? 'HIGH_TIDE' : 'MEDIUM_TIDE';
+        } elseif (($hourInDay >= 11 && $hourInDay <= 16) || ($hourInDay >= 23 || $hourInDay <= 4)) {
+            return $height < 0.8 ? 'LOW_TIDE' : 'MEDIUM_TIDE';
         }
         return 'MEDIUM_TIDE';
     }

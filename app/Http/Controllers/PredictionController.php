@@ -98,11 +98,6 @@ class PredictionController extends Controller
             
             for ($hour = 0; $hour < 24; $hour++) {
                 $pred = $predictor->predictForDate($predictionDate->toDateString(), [
-                    'temperature' => 28.5,
-                    'pressure' => 1010.5,
-                    'wind_speed' => 3.2,
-                    'moon_phase' => null, // Biar didefinisikan service
-                    'day_of_year' => $predictionDate->dayOfYear,
                     'hour' => $hour
                 ]);
                 
