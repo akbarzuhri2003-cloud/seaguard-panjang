@@ -190,9 +190,9 @@
                     <button id="refreshData" class="flex-1 md:flex-none px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition flex items-center justify-center">
                         <i class="fas fa-sync-alt mr-2"></i>Refresh
                     </button>
-                    <button id="downloadData" class="flex-1 md:flex-none px-3 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition flex items-center justify-center">
+                    <a href="{{ route('export.knn') }}" class="flex-1 md:flex-none px-3 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition flex items-center justify-center">
                         <i class="fas fa-download mr-2"></i>Data
-                    </button>
+                    </a>
                 </div>
             </div>
             
@@ -539,9 +539,7 @@
                 refreshMapData();
             });
             
-            safeAddListener('downloadData', 'click', function() {
-                downloadMapData();
-            });
+
             
             safeAddListener('zoomIn', 'click', () => map.zoomIn());
             safeAddListener('zoomOut', 'click', () => map.zoomOut());
@@ -640,30 +638,7 @@
             setTimeout(() => notification.remove(), 3000);
         }
         
-        function downloadMapData() {
-            let csv = 'Location,Sensor ID,Height (m),Status,Last Update,Latitude,Longitude\n';
-            
-            Object.keys(locations).forEach(key => {
-                const loc = locations[key];
-                csv += `"${loc.name}","${loc.sensor_id ?? 'N/A'}",${loc.current_height},"${loc.status}","${loc.last_update}",${loc.lat},${loc.lng}\n`;
-            });
-            
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `seaguard-sensor-data-${new Date().toISOString().slice(0,10)}.csv`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
 
-            const notification = document.createElement('div');
-            notification.className = 'fixed top-4 right-4 px-4 py-2 bg-blue-500 text-white rounded-lg shadow-lg z-[2000]';
-            notification.textContent = 'CSV Data Berhasil Diunduh!';
-            document.body.appendChild(notification);
-            setTimeout(() => notification.remove(), 3000);
-        }
         
         window.showLocationDetails = function(key) {
             const loc = locations[key];

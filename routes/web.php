@@ -24,6 +24,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/weekly-prediction', [PredictionController::class, 'index'])->name('weekly-prediction');
     
     Route::get('/maps', [MapController::class, 'index'])->name('maps');
+    Route::get('/export-knn-data', [MapController::class, 'exportKnnData'])->name('export.knn');
     
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 });
