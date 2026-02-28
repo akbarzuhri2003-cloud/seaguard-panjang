@@ -299,9 +299,11 @@ class DashboardController extends Controller
         $result = $importService->import($request->file('file'));
 
         if ($result['success']) {
-            return redirect()->route('dashboard')->with('success', $result['message'])->with('import_errors', $result['errors']);
+            $msg = "Data Berhasil Diupload! {$result['count']} poin data berhasil diproses.";
+            return redirect()->route('dashboard')->with('success', $msg)->with('import_errors', $result['errors']);
         } else {
-            return redirect()->route('dashboard')->with('error', $result['message']);
+            $msg = "Gagal Mengupload Data: " . $result['message'];
+            return redirect()->route('dashboard')->with('error', $msg);
         }
     }
 }

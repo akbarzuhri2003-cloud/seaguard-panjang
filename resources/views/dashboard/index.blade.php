@@ -23,10 +23,15 @@
 
 {{-- Flash Messages --}}
 @if(session('success'))
-<div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6 rounded shadow-sm" role="alert">
-    <div class="flex__ items-center">
-        <i class="fas fa-check-circle mr-2"></i>
-        <p>{{ session('success') }}</p>
+<div class="bg-green-50 dark:bg-green-900/30 border-l-4 border-green-500 text-green-700 dark:text-green-300 p-4 mb-6 rounded-xl shadow-md animate-bounce-short" role="alert">
+    <div class="flex items-center">
+        <div class="w-10 h-10 bg-green-100 dark:bg-green-800 rounded-full flex items-center justify-center mr-3">
+            <i class="fas fa-check-circle text-green-600 dark:text-green-400 text-xl"></i>
+        </div>
+        <div>
+            <p class="font-bold">Berhasil!</p>
+            <p class="text-sm">{{ session('success') }}</p>
+        </div>
     </div>
 </div>
 @endif

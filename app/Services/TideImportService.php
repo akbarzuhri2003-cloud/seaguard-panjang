@@ -22,22 +22,50 @@ class TideImportService
             $worksheet = $spreadsheet->getActiveSheet();
             $rows = $worksheet->toArray();
             
-            // Remove header row
-            array_shift($rows);
-            
+            // The format from user screenshot shows headers (JAM) in row 1, 
+            // hours (1-24) in row 2, and data starting row 3.
             $dataToUpsert = [];
             $errors = [];
             
-            foreach ($rows as $index => $row) {
+            // Skip first two rows (headers)
+            $dataRows = array_slice($rows, 2);
+            
+            foreach ($dataRows as $rowIndex => $row) {
                 // Skip empty rows
                 if (empty($row[0])) {
                     continue;
                 }
                 
                 try {
-                    $dataToUpsert[] = $this->prepareRowData($row);
+                    $date = $this->parseDate($row[0]);
+                    
+                    // Iterate columns 1 to 24 (index 1 to 24)
+                    for ($hour = 1; $hour <= 24; $hour++) {
+                        $value = $row[$hour] ?? null;
+                        
+                        if ($value === null || $value === '') {
+                            continue;
+                        }
+
+                        $height = floatval($value);
+                        $time = sprintf('%02d:00:00', $hour % 24);
+                        if ($hour == 24) $time = '00:00:00'; 
+
+                        $dataToUpsert[] = [
+                            'date' => $date,
+                            'time' => $time,
+                            'height' => $height,
+                            'type' => $this->determineTideType($height, $time),
+                            'temperature' => 28.5,
+                            'wind_speed' => 3.2,
+                            'pressure' => 1010.5,
+                            'wind_direction' => 'Utara',
+                            'created_at' => now(),
+                            'updated_at' => now(),
+                        ];
+                    }
                 } catch (\Exception $e) {
-                    $rowNum = $index + 2; // +1 for 0-index, +1 for header
+                    $rowNum = $rowIndex + 3; 
                     $errors[] = "Row {$rowNum}: " . $e->getMessage();
                     Log::warning("Error processing row {$rowNum}: " . $e->getMessage());
                 }
@@ -76,37 +104,24 @@ class TideImportService
             ];
         }
     }
-    
-    private function prepareRowData($row)
-    {
-        $date = $this->parseDate($row[0]);
-        $time = $this->parseTime($row[1] ?? '00:00:00');
-        $height = floatval($row[2] ?? 0);
-        
-        return [
-            'date' => $date,
-            'time' => $time,
-            'height' => $height,
-            'type' => $this->determineTideType($height, $time),
-            'temperature' => isset($row[3]) && $row[3] !== '' ? floatval($row[3]) : 28.5,
-            'wind_speed' => isset($row[4]) && $row[4] !== '' ? floatval($row[4]) : 3.2,
-            'pressure' => isset($row[5]) && $row[5] !== '' ? floatval($row[5]) : 1010.5,
-            'wind_direction' => isset($row[6]) && $row[6] !== '' ? $row[6] : 'Utara',
-            'created_at' => now(),
-            'updated_at' => now(),
-        ];
-    }
-    
+
     private function parseDate($value)
     {
         if (is_numeric($value)) {
             return \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($value)->format('Y-m-d');
         }
         
+        // Handle "01-Nov" formats
         try {
-            return Carbon::parse($value)->format('Y-m-d');
+            // Assume 2025 as per screenshot "november-desember 2025"
+            $date = Carbon::parse($value . ' 2025');
+            return $date->format('Y-m-d');
         } catch (\Exception $e) {
-            throw new \Exception("Invalid date format: {$value}");
+            try {
+                return Carbon::parse($value)->format('Y-m-d');
+            } catch (\Exception $e2) {
+                throw new \Exception("Invalid date format: {$value}");
+            }
         }
     }
     
