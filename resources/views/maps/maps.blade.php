@@ -439,11 +439,6 @@
             setInterval(updateAllTimes, 1000);
             initMap();
             
-        document.addEventListener('DOMContentLoaded', function() {
-            updateAllTimes();
-            setInterval(updateAllTimes, 1000);
-            initMap();
-            
             // Mobile Menu Toggle
             const mobileMenuButton = document.getElementById('mobile-menu-button-trigger');
             const mobileMenu = document.getElementById('mobile-menu-map');
@@ -454,11 +449,13 @@
                     if (mobileMenu.classList.contains('hidden')) {
                         mobileMenu.classList.remove('hidden');
                         setTimeout(() => { mobileMenu.style.maxHeight = '1000px'; }, 10);
-                        menuIcon.classList.replace('fa-bars', 'fa-times');
+                        menuIcon.classList.remove('fa-bars');
+                        menuIcon.classList.add('fa-times');
                     } else {
                         mobileMenu.style.maxHeight = '0';
                         setTimeout(() => { mobileMenu.classList.add('hidden'); }, 300);
-                        menuIcon.classList.replace('fa-times', 'fa-bars');
+                        menuIcon.classList.remove('fa-times');
+                        menuIcon.classList.add('fa-bars');
                     }
                 });
             }
