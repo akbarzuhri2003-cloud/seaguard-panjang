@@ -8,7 +8,7 @@ use Illuminate\Support\Carbon;
 
 class KNNTidePredictor
 {
-    private $k = 3;
+    private $k = 5;
     private $historicalDataCache = null;
     
     public function predictForDate($date, $features = null)
@@ -183,9 +183,14 @@ class KNNTidePredictor
     private function calculateTidalFactor($date)
     {
         $moonPhase = $this->getMoonPhase($date);
-        if ($moonPhase < 0.1 || $moonPhase > 0.9) return 1.2;
-        if ($moonPhase > 0.4 && $moonPhase < 0.6) return 0.8;
-        return 1.0;
+        
+        // Spring tides (higher) happen at New Moon (0.0) and Full Moon (0.5)
+        // Neap tides (lower) happen at Quarter Moons (0.25 and 0.75)
+        // We use a cosine wave with period 0.5 to peak at 0.0 and 0.5
+        // Factor ranges from 0.85 to 1.15 smoothly
+        $factor = 1.0 + (0.15 * cos(4 * M_PI * $moonPhase));
+        
+        return $factor;
     }
 
     private function predictTideType($height, $hour)
