@@ -320,7 +320,7 @@
                     </div>
                     
                     <div class="flex items-center justify-between gap-2">
-                        <button onclick="flyToLocation({{ $location['lat'] }}, {{ $location['lng'] }})" 
+                        <button onclick="flyToLocation({{ $location['lat'] }}, {{ $location['lng'] }}, '{{ $key }}')" 
                                 class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-blue-700 transition shadow-md">
                             <i class="fas fa-map-marker-alt mr-2"></i>Map
                         </button>
@@ -578,8 +578,13 @@
             document.getElementById('currentCoords').textContent = `${center.lat.toFixed(4)}, ${center.lng.toFixed(4)}`;
         }
         
-        window.flyToLocation = function(lat, lng) {
-            map.flyTo([lat, lng], 16, { duration: 1.5 });
+        window.flyToLocation = function(lat, lng, key) {
+            map.flyTo([lat, lng], 17, { duration: 1.5 });
+            if (markers[key]) {
+                setTimeout(() => {
+                    markers[key].openPopup();
+                }, 1600);
+            }
         };
         
         window.showStreetView = function(lat, lng) {
@@ -636,22 +641,28 @@
         }
         
         function downloadMapData() {
-            const data = {
-                export_time: new Date().toISOString(),
-                locations: locations,
-                stats: stats,
-                heatmap_points: heatmapData.length
-            };
+            let csv = 'Location,Sensor ID,Height (m),Status,Last Update,Latitude,Longitude\n';
             
-            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            Object.keys(locations).forEach(key => {
+                const loc = locations[key];
+                csv += `"${loc.name}","${loc.sensor_id ?? 'N/A'}",${loc.current_height},"${loc.status}","${loc.last_update}",${loc.lat},${loc.lng}\n`;
+            });
+            
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `seaguard-map-data-${new Date().toISOString().slice(0,10)}.json`;
+            a.download = `seaguard-sensor-data-${new Date().toISOString().slice(0,10)}.csv`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
+
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-4 right-4 px-4 py-2 bg-blue-500 text-white rounded-lg shadow-lg z-[2000]';
+            notification.textContent = 'CSV Data Berhasil Diunduh!';
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 3000);
         }
         
         window.showLocationDetails = function(key) {
