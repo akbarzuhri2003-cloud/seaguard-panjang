@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 use App\Models\HistoricalTide;
+use Illuminate\Support\Facades\Cache;
 
 class PredictionController extends Controller
 {

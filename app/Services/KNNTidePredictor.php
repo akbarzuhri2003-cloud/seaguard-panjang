@@ -10,6 +10,7 @@ class KNNTidePredictor
 {
     private $k = 5;
     private $historicalDataCache = null;
+    private $precalculatedFeatures = null;
     
     public function predictForDate($date, $features = null)
     {
@@ -26,48 +27,32 @@ class KNNTidePredictor
                 }
             }
             
-            $historicalData = $this->getHistoricalData($date);
+            $this->getHistoricalData($date); // Ensure data and features are loaded
             
-            if ($historicalData->isEmpty()) {
+            if (!$this->historicalDataCache || $this->historicalDataCache->isEmpty()) {
                 return null;
             }
             
             $distances = [];
             $weights = [
-                'temperature' => 0.05, // Reduced weight for secondary features
+                'temperature' => 0.05,
                 'pressure'    => 0.05,
                 'wind_speed'  => 0.05,
-                'moon_phase'  => 0.3,  // Increased weight for lunar influence
-                'day_of_year' => 0.35, // Primary seasonal influence
-                'hour'        => 0.2,  // Hourly diurnal influence
+                'moon_phase'  => 0.3,
+                'day_of_year' => 0.35,
+                'hour'        => 0.2,
             ];
             
-            foreach ($historicalData as $data) {
-                // Pre-calculate data features to avoid excessive Carbon calls in loop
-                $dataCarbon = Carbon::parse($data->date);
-                $dataTime = Carbon::parse($data->time);
-                
-                $dataFeatures = [
-                    'temperature' => $data->temperature,
-                    'pressure' => $data->pressure,
-                    'wind_speed' => $data->wind_speed,
-                    'moon_phase' => $this->getMoonPhase($dataCarbon),
-                    'day_of_year' => $dataCarbon->dayOfYear,
-                    'hour' => $dataTime->hour,
-                ];
-
+            foreach ($this->precalculatedFeatures as $index => $dataFeatures) {
                 $sum = 0;
                 foreach ($weights as $key => $weight) {
-                    $val1 = $features[$key] ?? 0;
-                    $val2 = $dataFeatures[$key] ?? 0;
-                    $diff = $val1 - $val2;
+                    $diff = ($features[$key] ?? 0) - ($dataFeatures[$key] ?? 0);
                     $sum += $weight * ($diff * $diff);
                 }
-                $distance = sqrt($sum);
                 
                 $distances[] = [
-                    'distance' => $distance,
-                    'data' => $data
+                    'distance' => sqrt($sum),
+                    'data' => $this->historicalDataCache[$index]
                 ];
             }
             
@@ -116,6 +101,23 @@ class KNNTidePredictor
             }
 
             $this->historicalDataCache = $data;
+            
+            // Pre-calculate all features ONCE
+            $this->precalculatedFeatures = [];
+            foreach ($data as $index => $row) {
+                $dCarbon = Carbon::parse($row->date);
+                $dTime = Carbon::parse($row->time);
+                
+                $this->precalculatedFeatures[$index] = [
+                    'temperature' => (float)$row->temperature,
+                    'pressure' => (float)$row->pressure,
+                    'wind_speed' => (float)$row->wind_speed,
+                    'moon_phase' => (float)$this->getMoonPhase($dCarbon),
+                    'day_of_year' => (int)$dCarbon->dayOfYear,
+                    'hour' => (int)$dTime->hour,
+                ];
+            }
+
             return $data;
 
         } catch (\Exception $e) {

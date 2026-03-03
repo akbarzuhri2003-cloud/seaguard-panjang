@@ -3,6 +3,15 @@
 @section('title', 'Prediksi Mingguan')
 
 @section('content')
+<style>
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in {
+        animation: fadeIn 0.4s ease-out forwards;
+    }
+</style>
 <div class="mb-8 px-1">
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div class="w-full">
@@ -228,6 +237,7 @@
 
     // Chart instance
     let weeklyChart = null;
+    let localCache = {}; // Client-side cache for 'wush wush' speed
     
     // Initialize page
     document.addEventListener('DOMContentLoaded', function() {
