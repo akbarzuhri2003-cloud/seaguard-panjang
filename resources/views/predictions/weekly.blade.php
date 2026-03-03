@@ -293,14 +293,23 @@
         document.getElementById('lastUpdated').textContent = 
             data.last_updated;
         
-        // Update current water level
-        if (currentData) {
-            document.getElementById('currentWaterLevel').textContent = 
-                `${currentData.height} m`;
+        // Update current water level & status based on selected date
+        const selectedDateStr = document.getElementById('predictionDate').value;
+        const todayStr = new Date().toISOString().split('T')[0];
+        
+        if (selectedDateStr > todayStr && predictions.length > 0) {
+            // Jika memilih tanggal depan, tunjukkan prediksi hari pertama yang dipilih
+            const firstPred = predictions[0];
+            document.getElementById('currentWaterLevel').textContent = `${firstPred.avg_height} m`;
+            updateCurrentStatus(firstPred.status);
             
-            // Determine current status
-            const currentStatus = determineStatusFromHeight(currentData.height);
-            updateCurrentStatus(currentStatus);
+            // Ubah label "Tinggi Air" jadi "Prediksi Awal" biar gak bingung
+            document.querySelector('#currentWaterLevel').parentElement.querySelector('p').textContent = 'Prediksi Rerata';
+        } else if (currentData) {
+            // Jika hari ini, tunjukkan data LIVE
+            document.getElementById('currentWaterLevel').textContent = `${currentData.height} m`;
+            updateCurrentStatus(determineStatusFromHeight(currentData.height));
+            document.querySelector('#currentWaterLevel').parentElement.querySelector('p').textContent = 'Tinggi Air';
         }
         
         // Find highest prediction
