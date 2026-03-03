@@ -21,7 +21,7 @@ class PredictionController extends Controller
     }
 
     // API untuk data prediksi (diakses dari halaman weekly)
-    public function getPredictions()
+    public function getPredictions(Request $request)
     {
         try {
             // Ambil semua data historis dari tabel yang benar

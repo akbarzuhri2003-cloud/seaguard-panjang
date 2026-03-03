@@ -19,10 +19,12 @@
             <div class="relative group">
                 <input type="date" id="predictionDate" 
                     class="px-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl text-xs font-bold text-gray-700 dark:text-gray-200 focus:ring-2 focus:ring-blue-500 transition-all outline-none" 
-                    value="{{ date('Y-m-d') }}"
-                    onchange="loadPredictions()">
+                    value="{{ date('Y-m-d') }}">
                 <div class="absolute -top-2 left-4 px-2 bg-white dark:bg-gray-800 text-[8px] font-black text-blue-500 uppercase tracking-widest">Mulai Tanggal</div>
             </div>
+            <button onclick="loadPredictions()" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl shadow-xl shadow-blue-500/20 transition-all hover:scale-[1.02] active:scale-95 flex items-center justify-center font-black text-xs uppercase tracking-widest">
+                <i class="fas fa-search mr-2"></i>Prediksi
+            </button>
             <div class="px-4 py-3 bg-blue-50 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 rounded-2xl text-[10px] font-black uppercase tracking-widest flex items-center justify-center border border-blue-100 dark:border-blue-800 shadow-sm">
                 <i class="fas fa-database mr-2 opacity-50"></i>
                 <span id="dataPoints">0</span> <span class="ml-1">records</span>
