@@ -16,6 +16,13 @@
             </p>
         </div>
         <div class="flex flex-col sm:flex-row items-stretch sm:items-center space-y-2 sm:space-y-0 sm:space-x-3 w-full md:w-auto">
+            <div class="relative group">
+                <input type="date" id="predictionDate" 
+                    class="px-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl text-xs font-bold text-gray-700 dark:text-gray-200 focus:ring-2 focus:ring-blue-500 transition-all outline-none" 
+                    value="{{ date('Y-m-d') }}"
+                    onchange="loadPredictions()">
+                <div class="absolute -top-2 left-4 px-2 bg-white dark:bg-gray-800 text-[8px] font-black text-blue-500 uppercase tracking-widest">Mulai Tanggal</div>
+            </div>
             <div class="px-4 py-3 bg-blue-50 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 rounded-2xl text-[10px] font-black uppercase tracking-widest flex items-center justify-center border border-blue-100 dark:border-blue-800 shadow-sm">
                 <i class="fas fa-database mr-2 opacity-50"></i>
                 <span id="dataPoints">0</span> <span class="ml-1">records</span>
@@ -227,8 +234,13 @@
 
     // Load predictions from API
     async function loadPredictions() {
+        // Show loading state
+        document.getElementById('loadingState').classList.remove('hidden');
+        document.getElementById('content').classList.add('hidden');
+
         try {
-            const response = await fetch('/api/predictions');
+            const startDate = document.getElementById('predictionDate').value;
+            const response = await fetch(`/api/predictions?start_date=${startDate}`);
             const data = await response.json();
 
             if (data.empty || !data.predictions || data.predictions.length === 0) {

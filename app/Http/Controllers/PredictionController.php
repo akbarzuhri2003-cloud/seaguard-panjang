@@ -45,11 +45,16 @@ class PredictionController extends Controller
                 ]);
             }
 
+            // Ambil start_date dari request, default ke hari ini
+            $startDate = $request->query('start_date') 
+                ? Carbon::parse($request->query('start_date'), 'Asia/Jakarta') 
+                : Carbon::today('Asia/Jakarta');
+
             // Data real-time (record terakhir)
             $currentData = HistoricalTide::latest('date')->latest('time')->first();
 
-            // Hitung prediksi KNN
-            $predictions = $this->calculatePredictions($historicalData);
+            // Hitung prediksi KNN mulai dari tanggal yang dipilih
+            $predictions = $this->calculatePredictions($historicalData, $startDate);
 
             // Hitung akurasi
             $accuracy = $this->calculateAccuracy($historicalData);
@@ -80,11 +85,11 @@ class PredictionController extends Controller
         }
     }
 
-    // Algoritma KNN untuk prediksi 7 hari ke depan
-    private function calculatePredictions($historicalData)
+    // Algoritma KNN untuk prediksi 7 hari ke depan mulai dari $startDate
+    private function calculatePredictions($historicalData, $startDate = null)
     {
         $predictions = [];
-        $today = Carbon::today('Asia/Jakarta');
+        $today = $startDate ?: Carbon::today('Asia/Jakarta');
         $predictor = new \App\Services\KNNTidePredictor();
 
         // Prediksi untuk 7 hari ke depan
